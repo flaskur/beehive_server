@@ -82,8 +82,47 @@ land_value = browser.execute_script('return arguments[0].children[6].children[1]
 building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
 market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
 
-
 print(owner, address, total_acreage, above_grade_sqft, property_type, tax_district, land_value, building_value, market_value)
+
+value_history = browser.find_element_by_css_selector('div#valuehistory table tbody')
+
+last_history = {}
+last_history['year'] = browser.execute_script('return arguments[0].children[0].children[0].innerText', value_history)
+last_history['land_value'] = browser.execute_script('return arguments[0].children[0].children[2].innerText', value_history)
+last_history['building_value'] = browser.execute_script('return arguments[0].children[0].children[3].innerText', value_history)
+last_history['market_value'] = browser.execute_script('return arguments[0].children[0].children[4].innerText', value_history)
+
+second_last_history = {}
+second_last_history['year'] = browser.execute_script('return arguments[0].children[1].children[0].innerText', value_history)
+second_last_history['land_value'] = browser.execute_script('return arguments[0].children[1].children[2].innerText', value_history)
+second_last_history['building_value'] = browser.execute_script('return arguments[0].children[1].children[3].innerText', value_history)
+second_last_history['market_value'] = browser.execute_script('return arguments[0].children[1].children[4].innerText', value_history)
+
+print(last_history, second_last_history)
+
+residence_record = browser.find_element_by_css_selector('div#residencetable')
+
+central_ac = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[4].children[0].innerText', residence_record)
+heating = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[5].children[0].innerText', residence_record)
+owner_occupied = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[6].children[0].innerText', residence_record)
+total_rooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[8].children[0].innerText', residence_record)
+bedrooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
+
+full_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
+three_quarters_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
+half_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[2].children[0].innerText', residence_record)
+num_kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
+fire_places = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
+year_built = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[5].children[0].innerText', residence_record)
+
+percent_complete = browser.execute_script('return arguments[0].children[1].children[0].children[2].children[9].children[0].innerText', residence_record)
+
+main_floor_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[0].children[0].innerText', residence_record)
+above_ground_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[3].children[0].innerText', residence_record)
+basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[4].children[0].innerText', residence_record)
+finished_basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[5].children[0].innerText', residence_record)
+
+print(central_ac, heating, owner_occupied, total_rooms, bedrooms, full_baths, three_quarters_baths, half_baths, num_kitchens, fire_places, year_built, percent_complete, main_floor_area, above_ground_area, basement_area, finished_basement_area)
 
 # for link in links_white:
 # 	link_address = browser.execute_script('return arguments[0].innerText', link)
