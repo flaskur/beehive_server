@@ -28,25 +28,88 @@ browser.execute_script('arguments[0].click()', submit_button)
 
 
 
-wait = WebDriverWait(browser, 10)
-links_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite td div div a')))
-links_grey = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsGrey td div div a')))
+wait = WebDriverWait(browser, 20)
 
-for link in links_white:
-	link_address = browser.execute_script('return arguments[0].innerText', link)
-	print(link_address)
-	if address in link_address.lower():
-		print('found match', address, link_address)
-		ActionChains(browser).click(link).perform()
+results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
+results_grey = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsGrey')))
 
-for link in links_grey:
-	link_address = browser.execute_script('return arguments[0].innerText', link)
-	print(link_address)
-	if address in link_address.lower():
-		print('found match', address, link_address)
-		ActionChains(browser).click(link).perform()
+found_count = 0
+
+for result in results_white:
+	result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
+	print('result address', result_address)
+	if address in result_address.lower():
+		print('found match', address, result_address)
+
+		# source = browser.execute_script('return arguments[0].children[0].onclick', result)
+		source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
+		print('source is', source)
+		new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
+		print(new_url)
+		found_count += 1
+
+		browser.get(new_url)
+		break
+
+if found_count < 1:
+	for result in results_grey:
+		result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
+		print('result address', result_address)
+		if address in result_address.lower():
+			print('found match', address, result_address)
+
+			# source = result.get_attribute('onclick')
+			source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
+			new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
+			print(new_url)
+			found_count += 1
+
+			browser.get(new_url)
+			break
+
+if found_count < 1:
+	print('no found address')
+
+summary_box = browser.find_element_by_css_selector('div.valueSummBox table tbody')
+
+owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
+address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
+total_acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
+above_grade_sqft = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
+property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
+tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
+land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
+building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
+market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
 
 
+print(owner, address, total_acreage, above_grade_sqft, property_type, tax_district, land_value, building_value, market_value)
+
+# for link in links_white:
+# 	link_address = browser.execute_script('return arguments[0].innerText', link)
+# 	print(link_address)
+# 	if address in link_address.lower():
+# 		print('found match', address, link_address)
+# 		found_count += 1
+# 		ActionChains(browser).click(link).perform()
+
+# for link in links_grey:
+# 	link_address = browser.execute_script('return arguments[0].innerText', link)
+# 	print(link_address)
+# 	if address in link_address.lower():
+# 		print('found match', address, link_address)
+# 		found_count += 1
+# 		ActionChains(browser).click(link).perform()
+
+# # so it checks every one and there might be duplicates, but it technically should link to the last one
+# if found_count < 1:
+# 	print('found nothing')
+# 	# should return error here
+
+
+# # you might want to do browser get url instead
+# detail = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'div#detailDiv')))
+# print(detail.innerText)
 
 # wait = WebDriverWait(browser, 10)
 # results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
