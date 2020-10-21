@@ -70,7 +70,8 @@ if found_count < 1:
 if found_count < 1:
 	print('no found address')
 
-summary_box = browser.find_element_by_css_selector('div.valueSummBox table tbody')
+# summary_box = browser.find_element_by_css_selector('div.valueSummBox table tbody')
+summary_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.valueSummBox table tbody')))
 
 owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
 address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
@@ -82,10 +83,21 @@ land_value = browser.execute_script('return arguments[0].children[6].children[1]
 building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
 market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
 
-print(owner, address, total_acreage, above_grade_sqft, property_type, tax_district, land_value, building_value, market_value)
+# print(owner, address, total_acreage, above_grade_sqft, property_type, tax_district, land_value, building_value, market_value)
+print()
+print('OWNER:', owner)
+print('ADDRESS:', address)
+print('TOTAL ACREAGE:', total_acreage)
+print('ABOVE GRADE SQFT:', above_grade_sqft)
+print('PROPERTY TYPE:', property_type)
+print('TAX DISTRICT:', above_grade_sqft)
+print('LAND VALUE:', land_value)
+print('BUILDING VALUE:', building_value)
+print('MARKET VALUE:', market_value)
 
 value_history = browser.find_element_by_css_selector('div#valuehistory table tbody')
 
+# convert this into an array of hash maps to get all years
 last_history = {}
 last_history['year'] = browser.execute_script('return arguments[0].children[0].children[0].innerText', value_history)
 last_history['land_value'] = browser.execute_script('return arguments[0].children[0].children[2].innerText', value_history)
@@ -98,7 +110,9 @@ second_last_history['land_value'] = browser.execute_script('return arguments[0].
 second_last_history['building_value'] = browser.execute_script('return arguments[0].children[1].children[3].innerText', value_history)
 second_last_history['market_value'] = browser.execute_script('return arguments[0].children[1].children[4].innerText', value_history)
 
+print()
 print(last_history, second_last_history)
+print()
 
 residence_record = browser.find_element_by_css_selector('div#residencetable')
 
@@ -122,7 +136,28 @@ above_ground_area = browser.execute_script('return arguments[0].children[1].chil
 basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[4].children[0].innerText', residence_record)
 finished_basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[5].children[0].innerText', residence_record)
 
-print(central_ac, heating, owner_occupied, total_rooms, bedrooms, full_baths, three_quarters_baths, half_baths, num_kitchens, fire_places, year_built, percent_complete, main_floor_area, above_ground_area, basement_area, finished_basement_area)
+# print(central_ac, heating, owner_occupied, total_rooms, bedrooms, full_baths, three_quarters_baths, half_baths, num_kitchens, fire_places, year_built, percent_complete, main_floor_area, above_ground_area, basement_area, finished_basement_area)
+
+print('CENTRAL AC:', central_ac)
+print('HEATING:', heating)
+print('OWNER OCCUPIED:', owner_occupied)
+print('TOTAL ROOMS:', total_rooms)
+print('BEDROOMS:', bedrooms)
+print('FULL BATHS:', full_baths)
+print('THREE QUARTERS BATHS:', three_quarters_baths)
+print('HALF BATHS:', half_baths)
+print('NUM KITCHENS:', num_kitchens)
+print('FIRE PLACES:', fire_places)
+print('YEAR BUILT:', year_built)
+print('PERCENT COMPLETE:', percent_complete)
+print('MAIN FLOOR AREA:', main_floor_area)
+print('ABOVE GROUND AREA:', above_ground_area)
+print('BASEMENT AREA:', basement_area)
+print('FINISHED BASEMENT AREA:', finished_basement_area)
+
+
+# EXTRACT URL LINK AT THE END RETURN
+
 
 # for link in links_white:
 # 	link_address = browser.execute_script('return arguments[0].innerText', link)
