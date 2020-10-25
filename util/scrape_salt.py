@@ -7,153 +7,171 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-address = '2451 E ELLISONWOODS AVE'.lower()
+def scrapeSalt(house_num, street_name):
+	address = f'{house_num} {street_name}'.lower()
 
-url = 'https://slco.org/assessor/new/searchiframe.cfm'
+	# convert this to a headless browser
+	browser = webdriver.Chrome(ChromeDriverManager().install())
 
-browser = webdriver.Chrome(ChromeDriverManager().install())
+	# navigate to start webpage --> avoids iframe
+	url = 'https://slco.org/assessor/new/searchiframe.cfm'
+	browser.get(url)
 
-browser.get(url)
+	# set input house num field
+	house_num_field = browser.find_element_by_css_selector('input[name="street_Num"')
+	browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)
 
-house_num_field = browser.find_element_by_css_selector('input[name="street_Num"')
-browser.execute_script('arguments[0].value = arguments[1]', house_num_field, '2451')
+	# set input street name field
+	street_name_field = browser.find_element_by_css_selector('input[name="street_name"')
+	browser.execute_script('arguments[0].value = arguments[1]', street_name_field, street_name)
 
-street_name_field = browser.find_element_by_css_selector('input[name="street_name"')
-browser.execute_script('arguments[0].value = arguments[1]', street_name_field, 'Ellisonwoods Ave')
+	# press submit button
+	submit_button = browser.find_element_by_css_selector('input#Submit')
+	browser.execute_script('arguments[0].click()', submit_button)
 
-submit_button = browser.find_element_by_css_selector('input#Submit')
-browser.execute_script('arguments[0].click()', submit_button)
+	# VALIDATE NONZERO SEARCH RESULTS
 
-# should validate if there are nonzero search results here
+	# access address rows
+	wait = WebDriverWait(browser, 20) # will timeout on 20 seconds of inactivity
+	results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
+	results_grey = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsGrey')))
 
-
-
-wait = WebDriverWait(browser, 20)
-
-results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
-results_grey = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsGrey')))
-
-found_count = 0
-
-for result in results_white:
-	result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
-	print('result address', result_address)
-	if address in result_address.lower():
-		print('found match', address, result_address)
-
-		# source = browser.execute_script('return arguments[0].children[0].onclick', result)
-		source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
-		print('source is', source)
-		new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
-		print(new_url)
-		found_count += 1
-
-		browser.get(new_url)
-		break
-
-if found_count < 1:
-	for result in results_grey:
+	# iterate through white rows, if address matches, immediately move to new url
+	found_count = 0
+	for result in results_white:
 		result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
-		print('result address', result_address)
-		if address in result_address.lower():
-			print('found match', address, result_address)
 
-			# source = result.get_attribute('onclick')
+		if address in result_address.lower():
 			source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
 			new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
-			print(new_url)
 			found_count += 1
 
 			browser.get(new_url)
 			break
 
-if found_count < 1:
-	print('no found address')
+	# only check grey rows if white rows failed
+	if found_count < 1:
+		for result in results_grey:
+			result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
 
-# summary_box = browser.find_element_by_css_selector('div.valueSummBox table tbody')
-summary_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.valueSummBox table tbody')))
+			if address in result_address.lower():
+				source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
+				new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
+				found_count += 1
 
-owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
-address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
-total_acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
-above_grade_sqft = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
-property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
-tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
-land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
-building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
-market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
+				browser.get(new_url)
+				break
 
-# print(owner, address, total_acreage, above_grade_sqft, property_type, tax_district, land_value, building_value, market_value)
-print()
-print('OWNER:', owner)
-print('ADDRESS:', address)
-print('TOTAL ACREAGE:', total_acreage)
-print('ABOVE GRADE SQFT:', above_grade_sqft)
-print('PROPERTY TYPE:', property_type)
-print('TAX DISTRICT:', above_grade_sqft)
-print('LAND VALUE:', land_value)
-print('BUILDING VALUE:', building_value)
-print('MARKET VALUE:', market_value)
+	# no address match, return error
+	if found_count < 1:
+		return {
+			'error': True
+		}
 
-value_history = browser.find_element_by_css_selector('div#valuehistory table tbody')
 
-# convert this into an array of hash maps to get all years
-last_history = {}
-last_history['year'] = browser.execute_script('return arguments[0].children[0].children[0].innerText', value_history)
-last_history['land_value'] = browser.execute_script('return arguments[0].children[0].children[2].innerText', value_history)
-last_history['building_value'] = browser.execute_script('return arguments[0].children[0].children[3].innerText', value_history)
-last_history['market_value'] = browser.execute_script('return arguments[0].children[0].children[4].innerText', value_history)
+	# scrape summary box
+	summary_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.valueSummBox table tbody')))
 
-second_last_history = {}
-second_last_history['year'] = browser.execute_script('return arguments[0].children[1].children[0].innerText', value_history)
-second_last_history['land_value'] = browser.execute_script('return arguments[0].children[1].children[2].innerText', value_history)
-second_last_history['building_value'] = browser.execute_script('return arguments[0].children[1].children[3].innerText', value_history)
-second_last_history['market_value'] = browser.execute_script('return arguments[0].children[1].children[4].innerText', value_history)
+	owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
+	address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
+	total_acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
+	above_grade_sqft = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
+	property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
+	tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
+	land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
+	building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
+	market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
 
-print()
-print(last_history, second_last_history)
-print()
+	print()
+	print('OWNER:', owner)
+	print('ADDRESS:', address)
+	print('TOTAL ACREAGE:', total_acreage)
+	print('ABOVE GRADE SQFT:', above_grade_sqft)
+	print('PROPERTY TYPE:', property_type)
+	print('TAX DISTRICT:', above_grade_sqft)
+	print('LAND VALUE:', land_value)
+	print('BUILDING VALUE:', building_value)
+	print('MARKET VALUE:', market_value)
 
-residence_record = browser.find_element_by_css_selector('div#residencetable')
+	# scrape value history
+	value_history = browser.find_element_by_css_selector('div#valuehistory table tbody')
 
-central_ac = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[4].children[0].innerText', residence_record)
-heating = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[5].children[0].innerText', residence_record)
-owner_occupied = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[6].children[0].innerText', residence_record)
-total_rooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[8].children[0].innerText', residence_record)
-bedrooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
+	# convert this into an array of hash maps to get all years
+	last_history = {}
+	last_history['year'] = browser.execute_script('return arguments[0].children[0].children[0].innerText', value_history)
+	last_history['land_value'] = browser.execute_script('return arguments[0].children[0].children[2].innerText', value_history)
+	last_history['building_value'] = browser.execute_script('return arguments[0].children[0].children[3].innerText', value_history)
+	last_history['market_value'] = browser.execute_script('return arguments[0].children[0].children[4].innerText', value_history)
 
-full_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
-three_quarters_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
-half_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[2].children[0].innerText', residence_record)
-num_kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
-fire_places = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
-year_built = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[5].children[0].innerText', residence_record)
+	second_last_history = {}
+	second_last_history['year'] = browser.execute_script('return arguments[0].children[1].children[0].innerText', value_history)
+	second_last_history['land_value'] = browser.execute_script('return arguments[0].children[1].children[2].innerText', value_history)
+	second_last_history['building_value'] = browser.execute_script('return arguments[0].children[1].children[3].innerText', value_history)
+	second_last_history['market_value'] = browser.execute_script('return arguments[0].children[1].children[4].innerText', value_history)
 
-percent_complete = browser.execute_script('return arguments[0].children[1].children[0].children[2].children[9].children[0].innerText', residence_record)
+	print()
+	print(last_history, second_last_history)
+	print()
 
-main_floor_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[0].children[0].innerText', residence_record)
-above_ground_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[3].children[0].innerText', residence_record)
-basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[4].children[0].innerText', residence_record)
-finished_basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[5].children[0].innerText', residence_record)
+	# scrape residence record
+	residence_record = browser.find_element_by_css_selector('div#residencetable')
 
-# print(central_ac, heating, owner_occupied, total_rooms, bedrooms, full_baths, three_quarters_baths, half_baths, num_kitchens, fire_places, year_built, percent_complete, main_floor_area, above_ground_area, basement_area, finished_basement_area)
+	central_ac = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[4].children[0].innerText', residence_record)
+	heating = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[5].children[0].innerText', residence_record)
+	owner_occupied = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[6].children[0].innerText', residence_record)
+	total_rooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[8].children[0].innerText', residence_record)
+	bedrooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
 
-print('CENTRAL AC:', central_ac)
-print('HEATING:', heating)
-print('OWNER OCCUPIED:', owner_occupied)
-print('TOTAL ROOMS:', total_rooms)
-print('BEDROOMS:', bedrooms)
-print('FULL BATHS:', full_baths)
-print('THREE QUARTERS BATHS:', three_quarters_baths)
-print('HALF BATHS:', half_baths)
-print('NUM KITCHENS:', num_kitchens)
-print('FIRE PLACES:', fire_places)
-print('YEAR BUILT:', year_built)
-print('PERCENT COMPLETE:', percent_complete)
-print('MAIN FLOOR AREA:', main_floor_area)
-print('ABOVE GROUND AREA:', above_ground_area)
-print('BASEMENT AREA:', basement_area)
-print('FINISHED BASEMENT AREA:', finished_basement_area)
+	full_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
+	three_quarters_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
+	half_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[2].children[0].innerText', residence_record)
+	num_kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
+	fire_places = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
+	year_built = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[5].children[0].innerText', residence_record)
+
+	percent_complete = browser.execute_script('return arguments[0].children[1].children[0].children[2].children[9].children[0].innerText', residence_record)
+
+	main_floor_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[0].children[0].innerText', residence_record)
+	above_ground_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[3].children[0].innerText', residence_record)
+	basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[4].children[0].innerText', residence_record)
+	finished_basement_area = browser.execute_script('return arguments[0].children[1].children[0].children[3].children[5].children[0].innerText', residence_record)
+
+	print('CENTRAL AC:', central_ac)
+	print('HEATING:', heating)
+	print('OWNER OCCUPIED:', owner_occupied)
+	print('TOTAL ROOMS:', total_rooms)
+	print('BEDROOMS:', bedrooms)
+	print('FULL BATHS:', full_baths)
+	print('THREE QUARTERS BATHS:', three_quarters_baths)
+	print('HALF BATHS:', half_baths)
+	print('NUM KITCHENS:', num_kitchens)
+	print('FIRE PLACES:', fire_places)
+	print('YEAR BUILT:', year_built)
+	print('PERCENT COMPLETE:', percent_complete)
+	print('MAIN FLOOR AREA:', main_floor_area)
+	print('ABOVE GROUND AREA:', above_ground_area)
+	print('BASEMENT AREA:', basement_area)
+	print('FINISHED BASEMENT AREA:', finished_basement_area)
+
+	scrape_info = dict(
+		error=False,
+		url=browser.current_url,
+		owner=owner,
+		address=address,
+		total_acreage=total_acreage,
+		above_grade_sqft=above_grade_sqft,
+		property_type=property_type,
+		tax_district=tax_district,
+		land_value=land_value,
+		building_value=building_value,
+		market_value=market_value
+	)
+
+	return scrape_info
+
+info = scrapeSalt('2451', 'e ellisonwoods ave')
+
+print(info)
 
 
 # EXTRACT URL LINK AT THE END RETURN
