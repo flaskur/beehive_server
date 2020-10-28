@@ -45,13 +45,33 @@ def postSearch():
 	return jsonify(response)
 
 # set to post method later
-@app.route('/scrape')
+@app.route('/scrape', methods=['POST'])
 @cross_origin()
-def getScrape():
-	print('invoking GET SCRAPE')
-	result = scrape_salt.scrapeSalt('2451', 'e ellisonwoods ave')
-	print(result)
+def postScrape():
+	# add logic to identify city based on zipcode
+	saltZipcodes = ['84116', '84104', '84105', '84103', '84108', '84102', '84106', '84111', '84115', '84109', '84101', '84112', '84113', '84119', '84044', '84107', '84114', '84117', '84118', '84120', '84121', '84123', '84124', '84128', '84129', '84133', '84138', '84144', '84180', '84132', '84134', '84136', '84139', '84141', '84143', '84148', '84150', '84184', '84189', '84190', '84199', '84110', '84122', '84125', '84126', '84127', '84130', '84131', '84145', '84147', '84151', '84152', '84157', '84158', '84165', '84170', '84171']
+	utahZipcodes = ['84004', '84003', '84013', '84020', '84005', '84626', '84629', '84633', '84526', '84043', '84042', '84664', '84057', '84058', '84097', '84651', '84062', '84601', '84604', '84606', '84653', '84655', '84045', '84660', '84663']
+	wasatchZipcodes = ['84032', '84036', '84049', '84060', '84604', '84082']
+ 	
+	data = request.json
+	print(data, data['houseNum'], data['streetName'], data['zipcode'])
+	print('invoking POST SCRAPE')
 
+	result = {}
+	if data['zipcode'] in saltZipcodes:
+		result = scrape_salt.scrapeSalt(data['houseNum'], data['streetName'])
+	elif data['zipcode'] in utahZipcodes:
+		pass
+		# result = scrape_utah.scrapeUtah(data['houseNum'], data['streetName'])
+	elif data['zipcode'] in wasatchZipcodes:
+		pass
+		# result = scrape_wasatch.scrapeWasatch(data['houseNum'], data['streetName'])
+	else:
+		result = {
+			'error': True
+		}
+
+	print(result)
 	return jsonify(result) # result is already a dictionary
 
 
