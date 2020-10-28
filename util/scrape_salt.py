@@ -296,7 +296,7 @@ def scrapeSalt(house_num, street_name):
 # info4 = scrapeSalt('241', 'n vine st # 701e')
 # print(info4)
 
-info5 = scrapeSalt('5908', 's 5625 w')
-print(info5)
+# info5 = scrapeSalt('5908', 's 5625 w')
+# print(info5)
 
 # need to handle duplicate correct addresses, allow user to select eventually
