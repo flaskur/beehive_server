@@ -1,5 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
+import sys
+sys.path.insert(0, '/util/scrape_salt.py')
+import util.scrape_salt as scrape_salt
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -40,6 +43,17 @@ def postSearch():
 	}
 
 	return jsonify(response)
+
+# set to post method later
+@app.route('/scrape')
+@cross_origin()
+def getScrape():
+	print('invoking GET SCRAPE')
+	result = scrape_salt.scrapeSalt('2451', 'e ellisonwoods ave')
+	print(result)
+
+	return jsonify(result) # result is already a dictionary
+
 
 
 if __name__ == '__main__':
