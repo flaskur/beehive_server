@@ -11,10 +11,10 @@ import unicodedata
 def scrapeSalt(house_num, street_name):
 	address = f'{house_num} {street_name}'.lower()
 
-	# options = Options()
-	# options.headless = True
-	# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-	browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
+	options = Options()
+	options.headless = True
+	browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
+	# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
 	# navigate to start webpage --> avoids iframe
 	url = 'https://slco.org/assessor/new/searchiframe.cfm'
@@ -134,25 +134,26 @@ def scrapeSalt(house_num, street_name):
 
 	print(val_history)
 		
-	central_ac = None
-	heating = None
-	owner_occupied = None
-	total_rooms = None
-	bedrooms = None
-	full_baths = None
-	three_quarters_baths = None
-	half_baths = None
-	num_kitchens = None
-	fire_places = None
-	year_built = None
-	percent_complete = None
-	main_floor_area = None
-	above_ground_area = None
-	basement_area = None
-	finished_basement_area = None
-	above_basement_area = None
+	central_ac = ''
+	heating = ''
+	owner_occupied = ''
+	total_rooms = ''
+	bedrooms = ''
+	full_baths = ''
+	three_quarters_baths = ''
+	half_baths = ''
+	num_kitchens = ''
+	fire_places = ''
+	year_built = ''
+	percent_complete = ''
+	main_floor_area = ''
+	above_ground_area = ''
+	basement_area = ''
+	finished_basement_area = ''
+	above_basement_area = ''
 
 	# scrape residence record
+	# condos have different residence record that doesn't work for this check
 	try:
 		# residence_record = browser.find_element_by_css_selector('div#residencetable')
 		residence_record = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#residencetable')))
@@ -199,8 +200,10 @@ def scrapeSalt(house_num, street_name):
 	print('BASEMENT AREA:', basement_area)
 	print('FINISHED BASEMENT AREA:', finished_basement_area)
 
-	det_structures = []
 
+	# html code is unique depending on whether or not there is 1 or greater than 1 detached structure
+	# you could do two try except nested within each other? i can differentiate the case by checking if the html element for tbody exists, but that would be in a try except again i guess.
+	det_structures = []
 	try:
 		# detached_structures = browser.find_element_by_css_selector('div#detachedTable table tbody')
 		detached_structures = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#detachedTable table tbody')))
@@ -220,7 +223,28 @@ def scrapeSalt(house_num, street_name):
 			det_structures.append(structure)
 			i += 1
 	except Exception as err:
+		print('FINISHED ALL DET STRUCTURES OR...')
+		print('NOT MULTI DETACHED STRUCTURE TABLE')
 		print(err)
+
+		try:
+			detached_structures = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#detachedTable div.details')))
+
+			structure = {}
+
+			structure['name'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[0].children[0].children[0].innerText', detached_structures)).strip()
+			structure['measure1'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[4].children[0].children[0].innerText', detached_structures)).strip()
+			structure['measure2'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[5].children[0].children[0].innerText', detached_structures)).strip()
+			structure['actual_year_built'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[2].children[1].children[0].children[0].innerText', detached_structures)).strip()
+			structure['replacement_cost_new'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[3].children[0].children[0].children[0].innerText', detached_structures)).strip()
+
+			det_structures.append(structure)
+		except Exception as err:
+			print('ACTUALLY NO DETACHED STRUCTURES')
+			print(err)
+
+
+			
 
 	print(det_structures)
 
@@ -262,13 +286,17 @@ def scrapeSalt(house_num, street_name):
 
 # info = scrapeSalt('2451', 'e ellisonwoods ave')
 # print(info)
-# print(info['url'])
 
 # info2 = scrapeSalt('4068', 'S 3200 W')
 # print(info2)
-# print(info2['url'])
 
-info3 = scrapeSalt('9061', 's greenhills dr')
-print(info3)
+# info3 = scrapeSalt('9061', 's greenhills dr')
+# print(info3)
+
+# info4 = scrapeSalt('241', 'n vine st # 701e')
+# print(info4)
+
+info5 = scrapeSalt('5908', 's 5625 w')
+print(info5)
 
 # need to handle duplicate correct addresses, allow user to select eventually
