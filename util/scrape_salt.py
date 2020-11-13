@@ -21,11 +21,11 @@ def scrapeSalt(house_num, street_name):
 	browser.get(url)
 
 	# set input house num field
-	house_num_field = browser.find_element_by_css_selector('input[name="street_Num"')
+	house_num_field = browser.find_element_by_css_selector('input[name="street_Num"]')
 	browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)
 
 	# set input street name field
-	street_name_field = browser.find_element_by_css_selector('input[name="street_name"')
+	street_name_field = browser.find_element_by_css_selector('input[name="street_name"]')
 	browser.execute_script('arguments[0].value = arguments[1]', street_name_field, street_name)
 
 	# press submit button
