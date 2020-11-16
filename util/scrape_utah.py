@@ -11,8 +11,8 @@ import unicodedata
 def scrapeUtah(house_num, street_name):
 	address = f'{house_num} {street_name}'.lower()
 
-	direction = street_name.split(' ', 1)[0]
-	street = street_name.split(' ', 1)[1]
+	direction = street_name.split(' ', 1)[0][0].lower()
+	street = street_name.split(' ', 1)[1].lower()
 
 	# options = Options()
 	# options.headless = True
@@ -29,6 +29,22 @@ def scrapeUtah(house_num, street_name):
 	browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)
 
 	# SWITCH DIRECTION --> RADIO SELECTION?
+	direction_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'select#av_dir')))
+	if direction == 'e':
+		east_option = browser.execute_script('return arguments[0].children[1]', direction_field)
+		browser.execute_script('arguments[0].selected = true', east_option)
+	elif direction == 'w':
+		west_option = browser.execute_script('return arguments[0].children[2]', direction_field)
+		browser.execute_script('arguments[0].selected = true', west_option)
+	elif direction == 's':
+		south_option = browser.execute_script('return arguments[0].children[3]', direction_field)
+		browser.execute_script('arguments[0].selected = true', south_option)
+	elif direction == 'n':
+		north_option = browser.execute_script('return arguments[0].children[4]', direction_field)
+		browser.execute_script('arguments[0].selected = true', north_option)
+	else:
+		print('no direction', direction)
+
 
 	street_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#av_street')))
 	browser.execute_script('arguments[0].value = arguments[1]', street_field, street)
@@ -49,97 +65,72 @@ def scrapeUtah(house_num, street_name):
 	browser.execute_script('arguments[0].click()', serial_number_link)
 
 	# MAIN PAGE
+	url = browser.current_url
 
-	tax_year = None
-	parcel_id = None
-	serial_id = None
-	entry_id = None
-	owner = None
-	address = None
-	tax_district = None
-	tax_district_rate = None
-	acreage = None
-	market_value = None
-	taxable_value = None
-	land_value = None
-	improvements_value = None
-	tax_charge = None
-	penalties_charged = None
-	special_charged = None
-	tax_payments = None
-	tax_abated = None
-	taxes_balance_due = None
-	escrow_processing_company = None
+	serial_number = None
+	serial_life = None
 	property_address = None
+	mailing_address = None
+	acreage = None
+	legal_description = None
+
+	parcel_id = None
+	tax_year = None
+	address = None
+	owner = None
+	account_type = None
+	primary_use = None
+	land_size = None
+	land_size_square_footage = None
+
+	improvement_number = None
+	improvement_type = None
 	square_footage = None
+	basement_square_footage = None
+	basement_square_footage_finished = None
 	year_built = None
-	back_tax_amount = None
-	review_date = None
-	legal_taxing_description = None
+	adj_year_built = None
+
+	quality = None
+	condition = None
+	exterior = None
+	interior = None
+	roof_type = None
+	roof_cover = None
+	foundation = None
+
+	bedroom_count = None
+	full_bath = None
+	three_fourths_bath = None
+	half_bath = None
+	fireplace = None
+
+
+	# scrape the main page, move to property info, move back to main page url, scrape property valuation
 
 	try:
-		table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#printableArea table tbody')))
+		table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table table tbody')))
 
-		tax_year = browser.execute_script('return arguments[0].children[1].children[1].innerText', table_body)
-		parcel_id = browser.execute_script('return arguments[0].children[2].children[1].innerText', table_body)
-		serial_id = browser.execute_script('return arguments[0].children[3].children[1].innerText', table_body)
-		entry_id = browser.execute_script('return arguments[0].children[4].children[1].innerText', table_body)
-		owner = browser.execute_script('return arguments[0].children[5].children[1].innerText', table_body)
-		owner2 = browser.execute_script('return arguments[0].children[6].children[1].innerText', table_body)
-		address = browser.execute_script('return arguments[0].children[7].children[1].innerText', table_body)
-		tax_district = browser.execute_script('return arguments[0].children[8].children[1].innerText', table_body)
-		tax_district_rate = browser.execute_script('return arguments[0].children[9].children[1].innerText', table_body)
-		acreage = browser.execute_script('return arguments[0].children[10].children[1].innerText', table_body)
-		market_value = browser.execute_script('return arguments[0].children[11].children[1].innerText', table_body)
-		taxable_value = browser.execute_script('return arguments[0].children[12].children[1].innerText', table_body)
-		land_value = browser.execute_script('return arguments[0].children[13].children[1].innerText', table_body)
-		improvements_value = browser.execute_script('return arguments[0].children[14].children[1].innerText', table_body)
-		tax_charge = browser.execute_script('return arguments[0].children[15].children[1].innerText', table_body)
-		penalties_charged = browser.execute_script('return arguments[0].children[16].children[1].innerText', table_body)
-		special_charged = browser.execute_script('return arguments[0].children[17].children[1].innerText', table_body)
-		tax_payments = browser.execute_script('return arguments[0].children[18].children[1].innerText', table_body)
-		tax_abated = browser.execute_script('return arguments[0].children[19].children[1].innerText', table_body)
-		taxes_balance_due = browser.execute_script('return arguments[0].children[20].children[1].innerText', table_body)
-		escrow_processing_company = browser.execute_script('return arguments[0].children[21].children[1].innerText', table_body)
-		property_address = browser.execute_script('return arguments[0].children[22].children[1].innerText', table_body)
-		square_footage = browser.execute_script('return arguments[0].children[23].children[1].innerText', table_body)
-		year_built = browser.execute_script('return arguments[0].children[24].children[1].innerText', table_body)
-		back_tax_amount = browser.execute_script('return arguments[0].children[25].children[1].innerText', table_body)
-		review_date = browser.execute_script('return arguments[0].children[26].children[1].innerText', table_body)
-		legal_taxing_description = browser.execute_script('return arguments[0].children[27].children[1].innerText', table_body)
+		serial_number = browser.execute_script('return arguments[0].children[0].children[0].innerText.split("Serial Number:")[1].trim()', table_body)
+		serial_life = browser.execute_script('return arguments[0].children[0].children[1].innerText.split("Serial Life:")[1].trim()', table_body)
+		property_address = browser.execute_script('return arguments[0].children[2].children[0].innerText.split("Property Address:")[1].trim()', table_body)
+		mailing_address = browser.execute_script('return arguments[0].children[3].children[0].innerText.split("Mailing Address:")[1].trim()', table_body)
+		acreage = browser.execute_script('return arguments[0].children[4].children[0].innerText.split("Acreage:")[1].trim()', table_body)
+		legal_description = browser.execute_script('return arguments[0].children[7].children[0].innerText.split("Legal Description:")[1].trim()', table_body)
+		
 	except Exception as err:
 		print(err)
 
 
 	scrape_info = dict(
 		error=False,
-		url=browser.current_url,
-		tax_year=tax_year,
-		parcel_id=parcel_id,
-		serial_id=serial_id,
-		entry_id=entry_id,
-		owner=owner,
-		address=address,
-		tax_district=tax_district,
-		tax_district_rate=tax_district_rate,
-		acreage=acreage,
-		market_value=market_value,
-		taxable_value=taxable_value,
-		land_value=land_value,
-		improvements_value=improvements_value,
-		tax_charge=tax_charge,
-		penalties_charged=penalties_charged,
-		special_charged=special_charged,
-		tax_payments=tax_payments,
-		tax_abated=tax_abated,
-		taxes_balance_due=taxes_balance_due,
-		escrow_processing_company=escrow_processing_company,
+		url=url,
+		serial_number=serial_number,
+		serial_life=serial_life,
 		property_address=property_address,
-		square_footage=square_footage,
-		year_built=year_built,
-		back_tax_amount=back_tax_amount,
-		review_date=review_date,
-		legal_taxing_description=legal_taxing_description
+		mailing_address=mailing_address,
+		acreage=acreage,
+		legal_description=legal_description
 	)
 
 	return scrape_info
@@ -148,11 +139,11 @@ def scrapeUtah(house_num, street_name):
 info1 = scrapeUtah('1709', 'n 2230 w')
 print(info1)
 
-info2 = scrapeUtah('612', 'n main st')
-print(info2)
+# info2 = scrapeUtah('612', 'n main st')
+# print(info2)
 
-info3 = scrapeUtah('155', 'e center st')
-print(info3)
+# info3 = scrapeUtah('155', 'e center st')
+# print(info3)
 
 '''
 1709 n 2230 w 84043
