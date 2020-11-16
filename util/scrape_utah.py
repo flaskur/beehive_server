@@ -65,7 +65,9 @@ def scrapeUtah(house_num, street_name):
 	browser.execute_script('arguments[0].click()', serial_number_link)
 
 	# MAIN PAGE
-	url = browser.current_url
+	property_information_url = browser.current_url
+	appraisal_information_url = browser.current_url
+	property_valuation_url = browser.current_url
 
 	serial_number = None
 	serial_life = None
@@ -106,8 +108,7 @@ def scrapeUtah(house_num, street_name):
 	fireplace = None
 
 
-	# scrape the main page, move to property info, move back to main page url, scrape property valuation
-
+	# property information
 	try:
 		table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table table tbody')))
 
@@ -117,14 +118,42 @@ def scrapeUtah(house_num, street_name):
 		mailing_address = browser.execute_script('return arguments[0].children[3].children[0].innerText.split("Mailing Address:")[1].trim()', table_body)
 		acreage = browser.execute_script('return arguments[0].children[4].children[0].innerText.split("Acreage:")[1].trim()', table_body)
 		legal_description = browser.execute_script('return arguments[0].children[7].children[0].innerText.split("Legal Description:")[1].trim()', table_body)
-		
+
+		navigation_select = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'form#page-changer select')))
+		appraisal_information_option = browser.execute_script('return arguments[0].children[4]', navigation_select)
+		appraisal_information_url = 'http://www.utahcounty.gov/LandRecords/' + browser.execute_script('return arguments[0].value', appraisal_information_option)
+		print('appraisal url is', appraisal_information_url)
+		property_valuation_option = browser.execute_script('return arguments[0].children[5]', navigation_select)
+		property_valuation_url = 'http://www.utahcounty.gov/LandRecords/' + browser.execute_script('return arguments[0].value', property_valuation_option)
+		print('valuation url is', property_valuation_url)
+	except Exception as err:
+		print(err)
+
+
+
+	# appraisal information
+	try:
+		browser.get(appraisal_information_url)
+
+
+
+
+	except Exception as err:
+		print(err)
+
+
+	# property valuation information
+	try:
+		browser.get(property_valuation_url)
+
+
 	except Exception as err:
 		print(err)
 
 
 	scrape_info = dict(
 		error=False,
-		url=url,
+		url=property_information_url,
 		serial_number=serial_number,
 		serial_life=serial_life,
 		property_address=property_address,
