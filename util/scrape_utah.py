@@ -84,7 +84,6 @@ def scrapeUtah(house_num, street_name):
 	primary_use = None
 	land_size = None
 	land_size_square_footage = None
-
 	improvement_number = None
 	improvement_type = None
 	square_footage = None
@@ -92,7 +91,6 @@ def scrapeUtah(house_num, street_name):
 	basement_square_footage_finished = None
 	year_built = None
 	adj_year_built = None
-
 	quality = None
 	condition = None
 	exterior = None
@@ -100,7 +98,6 @@ def scrapeUtah(house_num, street_name):
 	roof_type = None
 	roof_cover = None
 	foundation = None
-
 	bedroom_count = None
 	full_bath = None
 	three_fourths_bath = None
@@ -135,9 +132,52 @@ def scrapeUtah(house_num, street_name):
 	try:
 		browser.get(appraisal_information_url)
 
+		property_information_table = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table tbody')))
+
+		parcel_id = browser.execute_script('return arguments[0].children[1].children[0].children[1].innerText', property_information_table)
+		tax_year = browser.execute_script('return arguments[0].children[1].children[0].children[2].innerText.split("Tax Year:")[1].trim()', property_information_table)
+		address = browser.execute_script('return arguments[0].children[3].children[1].innerText', property_information_table)
+		owner = browser.execute_script('return arguments[0].children[5].children[1].innerText', property_information_table)
+		account_type = browser.execute_script('return arguments[0].children[7].children[1].innerText', property_information_table)
+		primary_use = browser.execute_script('return arguments[0].children[8].children[1].innerText', property_information_table)
+		land_size = browser.execute_script('return arguments[0].children[10].children[1].innerText', property_information_table)
+		land_size_square_footage = browser.execute_script('return arguments[0].children[11].children[1].innerText', property_information_table)
+
+		# ISSUE HERE WITH TEMP --> CONSIDERED A LIST WITH ANY, CONSIDERED iTERABLE ON A SINGLE VISIBILITY
+		temp = wait.until(EC.visibility_of_any_elements_located((By.CSS_SELECTOR, 'table tbody tr td')))
+		improvement_information_table1 = browser.execute('return arguments[0].children[2].children[0].children[1].children[0].children[0].children[0]', temp)
+		improvement_information_table2 = browser.execute('return arguments[0].children[2].children[0].children[1].children[1].children[0].children[0]', temp)
+		improvement_information_table3 = browser.execute('return arguments[0].children[2].children[0].children[1].children[2].children[0].children[0]', temp)
 
 
+		print('found tables')
 
+		# table 1
+		improvement_number = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table1)
+		improvement_type = browser.execute('return arguments[0].children[1].children[1].innerText', improvement_information_table1)
+		square_footage = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table1)
+		basement_square_footage = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table1)
+		basement_square_footage_finished = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table1)
+		year_built = browser.execute('return arguments[0].children[5].children[1].innerText', improvement_information_table1)
+		adj_year_built = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table1)
+
+		print('finished table 1')
+
+		# table 2
+		quality = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table2)
+		condition = browser.execute('return arguments[0].children[1].children[1].innerText', improvement_information_table2)
+		exterior = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table2)
+		interior = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table2)
+		roof_type = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table2)
+		roof_cover = browser.execute('return arguments[0].children[5].children[1].innerText', improvement_information_table2)
+		foundation = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table2)
+		
+		# table 3
+		bedroom_count = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table3)
+		full_bath = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table3)
+		three_fourths_bath = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table3)
+		half_bath = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table3)
+		fireplace = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table3)
 	except Exception as err:
 		print(err)
 
@@ -159,7 +199,34 @@ def scrapeUtah(house_num, street_name):
 		property_address=property_address,
 		mailing_address=mailing_address,
 		acreage=acreage,
-		legal_description=legal_description
+		legal_description=legal_description,
+		parcel_id=parcel_id,
+		tax_year=tax_year,
+		address=address,
+		owner=owner,
+		account_type=account_type,
+		primary_use=primary_use,
+		land_size=land_size,
+		land_size_square_footage=land_size_square_footage,
+		improvement_number=improvement_number,
+		improvement_type=improvement_type,
+		square_footage=square_footage,
+		basement_square_footage=basement_square_footage,
+		basement_square_footage_finished=basement_square_footage_finished,
+		year_built=year_built,
+		adj_year_built=adj_year_built,
+		quality=quality,
+		condition=condition,
+		exterior=exterior,
+		interior=interior,
+		roof_type=roof_type,
+		roof_cover=roof_cover,
+		foundation=foundation,
+		bedroom_count=bedroom_count,
+		full_bath=full_bath,
+		three_fourths_bath=three_fourths_bath,
+		half_bath=half_bath,
+		fireplace=fireplace
 	)
 
 	return scrape_info
