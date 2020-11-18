@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 import time
 import unicodedata
 
@@ -23,7 +24,8 @@ def scrapeRedfin(house_num, street_name, zipcode):
 	wait = WebDriverWait(browser, 5)
 
 	search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
-	browser.execute_script('arguments[0].value = arguments[1]', search_field, address)
+	# browser.execute_script('arguments[0].value = arguments[1]', search_field, address)
+	search_field.send_keys(address)
 
 
 	# trouble programmatically causing the dropdown to generate --> assumption of 1st entry might be too difficult
@@ -32,10 +34,9 @@ def scrapeRedfin(house_num, street_name, zipcode):
 
 
 	search_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'button[data-rf-test-name="searchButton"]')))
-	print(search_button)
-	print(browser.execute('return arguments[0].innerHTML', search_button))
-
-	browser.execute_script('return arguments[0].click()', search_button)
+	search_button.send_keys(Keys.RETURN)
+	# browser.execute_script('return arguments[0].click()', search_button)
+	# browser.findElement(By.CSS_SELECTOR, 'button[data-rf-test-name="searchButton"]').sendKeys(KEYS.RETURN)
 
 	time.sleep(5)
 
