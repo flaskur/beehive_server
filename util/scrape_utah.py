@@ -143,41 +143,59 @@ def scrapeUtah(house_num, street_name):
 		land_size = browser.execute_script('return arguments[0].children[10].children[1].innerText', property_information_table)
 		land_size_square_footage = browser.execute_script('return arguments[0].children[11].children[1].innerText', property_information_table)
 
-		# ISSUE HERE WITH TEMP --> CONSIDERED A LIST WITH ANY, CONSIDERED iTERABLE ON A SINGLE VISIBILITY
-		temp = wait.until(EC.visibility_of_any_elements_located((By.CSS_SELECTOR, 'table tbody tr td')))
-		improvement_information_table1 = browser.execute('return arguments[0].children[2].children[0].children[1].children[0].children[0].children[0]', temp)
-		improvement_information_table2 = browser.execute('return arguments[0].children[2].children[0].children[1].children[1].children[0].children[0]', temp)
-		improvement_information_table3 = browser.execute('return arguments[0].children[2].children[0].children[1].children[2].children[0].children[0]', temp)
+		table1 = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table[width="300"] tbody')))
+		table2 = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table[width="240"] tbody')))
+		table3 = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table[width="140"] tbody')))
 
-
-		print('found tables')
-
-		# table 1
-		improvement_number = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table1)
-		improvement_type = browser.execute('return arguments[0].children[1].children[1].innerText', improvement_information_table1)
-		square_footage = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table1)
-		basement_square_footage = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table1)
-		basement_square_footage_finished = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table1)
-		year_built = browser.execute('return arguments[0].children[5].children[1].innerText', improvement_information_table1)
-		adj_year_built = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table1)
-
-		print('finished table 1')
-
-		# table 2
-		quality = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table2)
-		condition = browser.execute('return arguments[0].children[1].children[1].innerText', improvement_information_table2)
-		exterior = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table2)
-		interior = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table2)
-		roof_type = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table2)
-		roof_cover = browser.execute('return arguments[0].children[5].children[1].innerText', improvement_information_table2)
-		foundation = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table2)
+		improvement_number = browser.execute_script('return arguments[0].children[0].children[1].innerText', table1)
+		improvement_type = browser.execute_script('return arguments[0].children[1].children[1].innerText', table1)
+		square_footage = browser.execute_script('return arguments[0].children[2].children[1].innerText', table1)
+		basement_square_footage = browser.execute_script('return arguments[0].children[3].children[1].innerText', table1)
+		basement_square_footage_finished = browser.execute_script('return arguments[0].children[4].children[1].innerText', table1)
+		year_built = browser.execute_script('return arguments[0].children[5].children[1].innerText', table1)
+		adj_year_built = browser.execute_script('return arguments[0].children[6].children[1].innerText', table1)
 		
-		# table 3
-		bedroom_count = browser.execute('return arguments[0].children[0].children[1].innerText', improvement_information_table3)
-		full_bath = browser.execute('return arguments[0].children[2].children[1].innerText', improvement_information_table3)
-		three_fourths_bath = browser.execute('return arguments[0].children[3].children[1].innerText', improvement_information_table3)
-		half_bath = browser.execute('return arguments[0].children[4].children[1].innerText', improvement_information_table3)
-		fireplace = browser.execute('return arguments[0].children[6].children[1].innerText', improvement_information_table3)
+		print(
+			improvement_number,
+			improvement_type,
+			square_footage,
+			basement_square_footage,
+			basement_square_footage_finished,
+			year_built,
+			adj_year_built
+		)
+
+		quality = browser.execute_script('return arguments[0].children[0].children[1].innerText', table2)
+		condition = browser.execute_script('return arguments[0].children[1].children[1].innerText', table2)
+		exterior = browser.execute_script('return arguments[0].children[2].children[1].innerText', table2)
+		interior = browser.execute_script('return arguments[0].children[3].children[1].innerText', table2)
+		roof_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', table2)
+		roof_cover = browser.execute_script('return arguments[0].children[5].children[1].innerText', table2)
+		foundation = browser.execute_script('return arguments[0].children[6].children[1].innerText', table2)
+
+		print(
+			quality,
+			condition,
+			exterior,
+			interior,
+			roof_type,
+			roof_cover,
+			foundation
+		)
+
+		bedroom_count = browser.execute_script('return arguments[0].children[0].children[1].innerText', table3)
+		full_bath = browser.execute_script('return arguments[0].children[2].children[1].innerText', table3)
+		three_fourths_bath = browser.execute_script('return arguments[0].children[3].children[1].innerText', table3)
+		half_bath = browser.execute_script('return arguments[0].children[4].children[1].innerText', table3)
+		fireplace = browser.execute_script('return arguments[0].children[6].children[1].innerText', table3)
+
+		print(
+			bedroom_count,
+			full_bath,
+			three_fourths_bath,
+			half_bath,
+			fireplace
+		)
 	except Exception as err:
 		print(err)
 
