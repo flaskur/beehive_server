@@ -19,10 +19,10 @@ def scrapeUtah(house_num, street_name):
 	# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
 	browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
-	# navigate to start webpage --> avoids iframe
 	url = 'http://www.utahcounty.gov/LandRecords/AddressSearchForm.asp'
 	browser.get(url)
 
+	# CONSIDER WRAPPING ENTIRE LOGIC IN TRY EXCEPT TO HANDLE TIMEOUT EXCEPTION
 	wait = WebDriverWait(browser, 5)
 
 	house_num_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#av_house')))
@@ -54,56 +54,62 @@ def scrapeUtah(house_num, street_name):
 
 	# ERROR HANDLING
 
+	try:
+		table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table tbody')))
+		serial_number_link = browser.execute_script('return arguments[0].children[1].children[0].children[0]', table_body)
+		browser.execute_script('arguments[0].click()', serial_number_link)
 
-	table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table tbody')))
-	serial_number_link = browser.execute_script('return arguments[0].children[1].children[0].children[0]', table_body)
-	browser.execute_script('arguments[0].click()', serial_number_link)
+		# repeat page for serial num
+		table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table tbody')))
+		serial_number_link = browser.execute_script('return arguments[0].children[1].children[0].children[0]', table_body)
+		browser.execute_script('arguments[0].click()', serial_number_link)
+	except Exception as err:
+		print(err)
 
-	# repeat page for serial num
-	table_body = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table table tbody')))
-	serial_number_link = browser.execute_script('return arguments[0].children[1].children[0].children[0]', table_body)
-	browser.execute_script('arguments[0].click()', serial_number_link)
+		return {
+			'error': True
+		}
 
 	# MAIN PAGE
 	property_information_url = browser.current_url
 	appraisal_information_url = browser.current_url
 	property_valuation_url = browser.current_url
 
-	serial_number = None
-	serial_life = None
-	property_address = None
-	mailing_address = None
-	acreage = None
-	legal_description = None
-
-	parcel_id = None
-	tax_year = None
-	address = None
-	owner = None
-	account_type = None
-	primary_use = None
-	land_size = None
-	land_size_square_footage = None
-	improvement_number = None
-	improvement_type = None
-	square_footage = None
-	basement_square_footage = None
-	basement_square_footage_finished = None
-	year_built = None
-	adj_year_built = None
-	quality = None
-	condition = None
-	exterior = None
-	interior = None
-	roof_type = None
-	roof_cover = None
-	foundation = None
-	bedroom_count = None
-	full_bath = None
-	three_fourths_bath = None
-	half_bath = None
-	fireplace = None
-
+	serial_number = ''
+	serial_life = ''
+	property_address = ''
+	mailing_address = ''
+	acreage = ''
+	legal_description = ''
+	parcel_id = ''
+	tax_year = ''
+	address = ''
+	owner = ''
+	account_type = ''
+	primary_use = ''
+	land_size = ''
+	land_size_square_footage = ''
+	improvement_number = ''
+	improvement_type = ''
+	square_footage = ''
+	basement_square_footage = ''
+	basement_square_footage_finished = ''
+	year_built = ''
+	adj_year_built = ''
+	quality = ''
+	condition = ''
+	exterior = ''
+	interior = ''
+	roof_type = ''
+	roof_cover = ''
+	foundation = ''
+	bedroom_count = ''
+	full_bath = ''
+	three_fourths_bath = ''
+	half_bath = ''
+	fireplace = ''
+	previous_year_market_value = ''
+	current_year_market_value = ''
 
 	# property information
 	try:
@@ -204,6 +210,12 @@ def scrapeUtah(house_num, street_name):
 	try:
 		browser.get(property_valuation_url)
 
+		table = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table[width="680"] tbody')))
+
+		previous_year_market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[1].innerText', table)
+		current_year_market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[4].innerText', table)
+
+		print(previous_year_market_value, current_year_market_value)
 
 	except Exception as err:
 		print(err)
@@ -244,7 +256,9 @@ def scrapeUtah(house_num, street_name):
 		full_bath=full_bath,
 		three_fourths_bath=three_fourths_bath,
 		half_bath=half_bath,
-		fireplace=fireplace
+		fireplace=fireplace,
+		previous_year_market_value=previous_year_market_value,
+		current_year_market_value=current_year_market_value
 	)
 
 	return scrape_info
@@ -253,7 +267,7 @@ def scrapeUtah(house_num, street_name):
 info1 = scrapeUtah('1709', 'n 2230 w')
 print(info1)
 
-# info2 = scrapeUtah('612', 'n main st')
+# info2 = scrapeUtah('612', 'n main')
 # print(info2)
 
 # info3 = scrapeUtah('155', 'e center st')
