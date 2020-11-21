@@ -11,10 +11,10 @@ import unicodedata
 def scrapeWasatch(house_num, street_name):
 	address = f'{house_num} {street_name}'.lower()
 
-	# options = Options()
-	# options.headless = True
-	# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-	browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
+	options = Options()
+	options.headless = True
+	browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
+	# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
 	# navigate to start webpage --> avoids iframe
 	url = 'https://www.wasatch.utah.gov/Services/Information-Lookup-Services/Property-Tax-Information-Lookup/Current-Year-Property-Tax-Lookup'
@@ -150,8 +150,8 @@ def scrapeWasatch(house_num, street_name):
 # info4 = scrapeWasatch('12286', 'n ross creek dr')
 # print(info5)
 
-info5 = scrapeWasatch('377', 'e keetly station cir')
-print(info5)
+# info5 = scrapeWasatch('377', 'e keetly station cir')
+# print(info5)
 
 '''
 290 w 300 s 84032

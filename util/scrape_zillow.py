@@ -90,5 +90,5 @@ def scrapeZillow(house_num, street_name, zipcode):
 # info2 = scrapeZillow('4068', 's 3200 w', '84119')
 # print(info2)
 
-info3 = scrapeZillow('9061', 'greenhills dr', '84093')
-print(info3)
+# info3 = scrapeZillow('9061', 'greenhills dr', '84093')
+# print(info3)

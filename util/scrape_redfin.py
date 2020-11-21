@@ -12,10 +12,10 @@ import unicodedata
 def scrapeRedfin(house_num, street_name, zipcode):
 	address = f'{house_num} {street_name} {zipcode}'.lower()
 
-	# options = Options()
-	# options.headless = True
-	# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-	browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
+	options = Options()
+	options.headless = True
+	browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
+	# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
 	# navigate to start webpage --> avoids iframe
 	url = 'https://www.redfin.com/'
@@ -128,6 +128,6 @@ def scrapeRedfin(house_num, street_name, zipcode):
 # info7 = scrapeRedfin('612', 'n main st', '84004')
 # print(info7)
 
-info8 = scrapeRedfin('155', 'e center st', '84004')
-print(info8)
+# info8 = scrapeRedfin('155', 'e center st', '84004')
+# print(info8)
 

@@ -14,10 +14,10 @@ def scrapeUtah(house_num, street_name):
 	direction = street_name.split(' ', 1)[0][0].lower()
 	street = street_name.split(' ', 1)[1].lower()
 
-	# options = Options()
-	# options.headless = True
-	# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-	browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
+	options = Options()
+	options.headless = True
+	browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
+	# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
 	url = 'http://www.utahcounty.gov/LandRecords/AddressSearchForm.asp'
 	browser.get(url)
@@ -264,8 +264,8 @@ def scrapeUtah(house_num, street_name):
 	return scrape_info
 
 
-info1 = scrapeUtah('1709', 'n 2230 w')
-print(info1)
+# info1 = scrapeUtah('1709', 'n 2230 w')
+# print(info1)
 
 # info2 = scrapeUtah('612', 'n main')
 # print(info2)
