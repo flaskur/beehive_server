@@ -10,100 +10,91 @@ import time
 import unicodedata
 
 def scrapeRedfin(house_num, street_name, zipcode):
-	address = f'{house_num} {street_name} {zipcode}'.lower()
-
-	options = Options()
-	options.headless = True
-	browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-	# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
-
-	# navigate to start webpage --> avoids iframe
-	url = 'https://www.redfin.com/'
-	browser.get(url)
-
-	wait = WebDriverWait(browser, 5)
-
-	search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
-	search_field.send_keys(address)
-
-	address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
-	browser.execute_script('arguments[0].click()', address_link)
-
-	# MAIN RESULTS PAGE
-
-	parcel_id = ''
-	estimate = ''
-	beds = ''
-	bath = ''
-	square_footage = ''
-	stories = ''
-	lot_size = ''
-	style = ''
-	year_built = ''
-	year_renovated = ''
-	county = ''
-
-	# TOP STATISTICS
 	try:
-		# inconsistent, could be 4 or 5 values if "last sold price" exists
-		main_statistics = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[data-rf-test-id="abp-homeinfo-homemainstats"]')))
+		address = f'{house_num} {street_name} {zipcode}'.lower()
 
-		estimate = browser.execute_script('return arguments[0].children[0].children[0].innerText', main_statistics)
-		# beds = browser.execute_script('return arguments[0].children[1].children[0].innerText', main_statistics)
-		# baths = browser.execute_script('return arguments[0].children[2].children[0].innerText', main_statistics)
-		# square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[0].innerText', main_statistics)
-		# price_per_square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[2].innerText', main_statistics)
+		options = Options()
+		options.headless = True
+		browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
+		# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
 
-	except Exception as err:
-		print(err)
+		# navigate to start webpage --> avoids iframe
+		url = 'https://www.redfin.com/'
+		browser.get(url)
 
-	# BOTTOM STATISTICS
-	try:
-		facts_table = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.median-values div.facts-table')))
+		wait = WebDriverWait(browser, 5)
 
-		beds = browser.execute_script('return arguments[0].children[0].children[1].innerText', facts_table)
-		baths = browser.execute_script('return arguments[0].children[1].children[1].innerText', facts_table)
-		square_footage = browser.execute_script('return arguments[0].children[2].children[1].innerText', facts_table)
-		stories = browser.execute_script('return arguments[0].children[3].children[1].innerText', facts_table)
-		lot_size = browser.execute_script('return arguments[0].children[4].children[1].innerText', facts_table)
-		style = browser.execute_script('return arguments[0].children[5].children[1].innerText', facts_table)
-		year_built = browser.execute_script('return arguments[0].children[6].children[1].innerText', facts_table)
-		year_renovated = browser.execute_script('return arguments[0].children[7].children[1].innerText', facts_table)
-		county = browser.execute_script('return arguments[0].children[8].children[1].innerText', facts_table)
-		parcel_id = browser.execute_script('return arguments[0].children[9].children[1].innerText', facts_table)
+		search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
+		search_field.send_keys(address)
 
-		print(
-			beds,
-			baths,
-			square_footage,
-			stories,
-			lot_size,
-			style,
-			year_built,
-			year_renovated,
-			county,
-			parcel_id
+		address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
+		browser.execute_script('arguments[0].click()', address_link)
+
+		# MAIN RESULTS PAGE
+
+		parcel_id = ''
+		estimate = ''
+		beds = ''
+		bath = ''
+		square_footage = ''
+		stories = ''
+		lot_size = ''
+		style = ''
+		year_built = ''
+		year_renovated = ''
+		county = ''
+
+		# TOP STATISTICS
+		try:
+			# inconsistent, could be 4 or 5 values if "last sold price" exists
+			main_statistics = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[data-rf-test-id="abp-homeinfo-homemainstats"]')))
+
+			estimate = browser.execute_script('return arguments[0].children[0].children[0].innerText', main_statistics)
+			# beds = browser.execute_script('return arguments[0].children[1].children[0].innerText', main_statistics)
+			# baths = browser.execute_script('return arguments[0].children[2].children[0].innerText', main_statistics)
+			# square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[0].innerText', main_statistics)
+			# price_per_square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[2].innerText', main_statistics)
+		except Exception as err:
+			print(err, 'failed top statistics')
+
+		# BOTTOM STATISTICS
+		try:
+			facts_table = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.median-values div.facts-table')))
+
+			beds = browser.execute_script('return arguments[0].children[0].children[1].innerText', facts_table)
+			baths = browser.execute_script('return arguments[0].children[1].children[1].innerText', facts_table)
+			square_footage = browser.execute_script('return arguments[0].children[2].children[1].innerText', facts_table)
+			stories = browser.execute_script('return arguments[0].children[3].children[1].innerText', facts_table)
+			lot_size = browser.execute_script('return arguments[0].children[4].children[1].innerText', facts_table)
+			style = browser.execute_script('return arguments[0].children[5].children[1].innerText', facts_table)
+			year_built = browser.execute_script('return arguments[0].children[6].children[1].innerText', facts_table)
+			year_renovated = browser.execute_script('return arguments[0].children[7].children[1].innerText', facts_table)
+			county = browser.execute_script('return arguments[0].children[8].children[1].innerText', facts_table)
+			parcel_id = browser.execute_script('return arguments[0].children[9].children[1].innerText', facts_table)
+		except Exception as err:
+			print(err, 'failed bottom statistics')
+
+		scrape_info = dict(
+			error=False,
+			url=browser.current_url,
+			parcel_id=parcel_id,
+			estimate=estimate,
+			beds=beds,
+			baths=baths,
+			square_footage=square_footage,
+			stories=stories,
+			lot_size=lot_size,
+			style=style,
+			year_built=year_built,
+			year_renovated=year_renovated,
+			county=county
 		)
+
+		return scrape_info
 	except Exception as err:
-		print(err)
-
-	scrape_info = dict(
-		error=False,
-		url=browser.current_url,
-		parcel_id=parcel_id,
-		estimate=estimate,
-		beds=beds,
-		baths=baths,
-		square_footage=square_footage,
-		stories=stories,
-		lot_size=lot_size,
-		style=style,
-		year_built=year_built,
-		year_renovated=year_renovated,
-		county=county
-	)
-
-	return scrape_info
+		return {
+			'error': True
+		}
 
 
 # info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
@@ -115,7 +106,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 # info3 = scrapeRedfin('9061', 'greenhills dr', '84093')
 # print(info3)
 
-# info4 = scrapeRedfin('241', 'n vine st #701e', '84093')
+# info4 = scrapeRedfin('241', 'n vine st 701e', '84103')
 # print(info4)
 
 # should fail
