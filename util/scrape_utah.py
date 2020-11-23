@@ -100,13 +100,13 @@ def scrapeUtah(house_num, street_name):
 		roof_type = ''
 		roof_cover = ''
 		foundation = ''
-		bedroom_count = ''
+		beds = ''
 		full_bath = ''
-		three_fourths_bath = ''
-		half_bath = ''
-		fireplace = ''
-		previous_year_market_value = ''
-		current_year_market_value = ''
+		three_fourths_baths = ''
+		half_baths = ''
+		fireplaces = ''
+		previous_market_value = ''
+		market_value = ''
 
 
 		# property information
@@ -164,11 +164,11 @@ def scrapeUtah(house_num, street_name):
 			roof_cover = browser.execute_script('return arguments[0].children[5].children[1].innerText', table2)
 			foundation = browser.execute_script('return arguments[0].children[6].children[1].innerText', table2)
 
-			bedroom_count = browser.execute_script('return arguments[0].children[0].children[1].innerText', table3)
-			full_bath = browser.execute_script('return arguments[0].children[2].children[1].innerText', table3)
-			three_fourths_bath = browser.execute_script('return arguments[0].children[3].children[1].innerText', table3)
-			half_bath = browser.execute_script('return arguments[0].children[4].children[1].innerText', table3)
-			fireplace = browser.execute_script('return arguments[0].children[6].children[1].innerText', table3)
+			beds = browser.execute_script('return arguments[0].children[0].children[1].innerText', table3)
+			baths = browser.execute_script('return arguments[0].children[2].children[1].innerText', table3)
+			three_fourths_baths = browser.execute_script('return arguments[0].children[3].children[1].innerText', table3)
+			half_baths = browser.execute_script('return arguments[0].children[4].children[1].innerText', table3)
+			fireplaces = browser.execute_script('return arguments[0].children[6].children[1].innerText', table3)
 		except Exception as err:
 			print(err, 'failed appraisal information')
 
@@ -179,14 +179,15 @@ def scrapeUtah(house_num, street_name):
 
 			table = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'table[width="680"] tbody')))
 
-			previous_year_market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[1].innerText', table)
-			current_year_market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[4].innerText', table)
+			previous_market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[1].innerText', table)
+			market_value = browser.execute_script('return arguments[0].children[arguments[0].children.length - 1].children[4].innerText', table)
 		except Exception as err:
 			print(err, 'failed property valuation')
 
 
 		scrape_info = dict(
 			error=False,
+			county='Utah',
 			url=property_information_url,
 			serial_number=serial_number,
 			serial_life=serial_life,
@@ -216,13 +217,13 @@ def scrapeUtah(house_num, street_name):
 			roof_type=roof_type,
 			roof_cover=roof_cover,
 			foundation=foundation,
-			bedroom_count=bedroom_count,
-			full_bath=full_bath,
-			three_fourths_bath=three_fourths_bath,
-			half_bath=half_bath,
-			fireplace=fireplace,
-			previous_year_market_value=previous_year_market_value,
-			current_year_market_value=current_year_market_value
+			beds=beds,
+			baths=baths,
+			three_fourths_baths=three_fourths_baths,
+			half_baths=half_baths,
+			fireplaces=fireplaces,
+			previous_market_value=previous_market_value,
+			market_value=market_value
 		)
 
 		return scrape_info

@@ -104,6 +104,7 @@ def scrapeWasatch(house_num, street_name):
 
 		scrape_info = dict(
 			error=False,
+			county='Wasatch',
 			url=browser.current_url,
 			tax_year=tax_year,
 			parcel_id=parcel_id,

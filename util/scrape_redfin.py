@@ -79,6 +79,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 			url=browser.current_url,
 			parcel_id=parcel_id,
 			estimate=estimate,
+			market_value=estimate,
 			beds=beds,
 			baths=baths,
 			square_footage=square_footage,

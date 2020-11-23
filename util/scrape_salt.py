@@ -81,8 +81,8 @@ def scrapeSalt(house_num, street_name):
 
 		owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
 		address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
-		total_acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
-		above_grade_sqft = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
+		acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
+		square_footage = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
 		property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
 		tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
 		land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
@@ -114,11 +114,11 @@ def scrapeSalt(house_num, street_name):
 		heating = ''
 		owner_occupied = ''
 		total_rooms = ''
-		bedrooms = ''
-		full_baths = ''
+		beds = ''
+		baths = ''
 		three_quarters_baths = ''
 		half_baths = ''
-		num_kitchens = ''
+		kitchens = ''
 		fire_places = ''
 		year_built = ''
 		percent_complete = ''
@@ -137,12 +137,12 @@ def scrapeSalt(house_num, street_name):
 			heating = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[5].children[0].innerText', residence_record)
 			owner_occupied = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[6].children[0].innerText', residence_record)
 			total_rooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[8].children[0].innerText', residence_record)
-			bedrooms = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
+			beds = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
 
-			full_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
+			baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
 			three_quarters_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
 			half_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[2].children[0].innerText', residence_record)
-			num_kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
+			kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
 			fire_places = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
 			year_built = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[5].children[0].innerText', residence_record)
 
@@ -200,12 +200,13 @@ def scrapeSalt(house_num, street_name):
 
 		scrape_info = dict(
 			error=False,
+			county='Salt Lake',
 			parcel_id=parcel_id.strip(),
 			url=browser.current_url.strip(),
 			owner=owner.strip(),
 			address=address.strip(),
-			total_acreage=total_acreage.strip(),
-			above_grade_sqft=above_grade_sqft.strip(),
+			acreage=acreage.strip(),
+			square_footage=square_footage.strip(),
 			property_type=property_type.strip(),
 			tax_district=tax_district.strip(),
 			land_value=land_value.strip(),
@@ -216,11 +217,11 @@ def scrapeSalt(house_num, street_name):
 			heating=heating.strip(),
 			owner_occupied=owner_occupied.strip(),
 			total_rooms=total_rooms.strip(),
-			bedrooms=bedrooms.strip(),
-			full_baths=full_baths.strip(),
+			beds=beds.strip(),
+			baths=baths.strip(),
 			three_quarters_baths=three_quarters_baths.strip(),
 			half_baths=half_baths.strip(),
-			num_kitchens=num_kitchens.strip(),
+			kitchens=kitchens.strip(),
 			fire_places=fire_places.strip(),
 			year_built=year_built.strip(),
 			percent_complete=percent_complete.strip(),
