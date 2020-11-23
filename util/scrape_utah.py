@@ -23,7 +23,7 @@ def scrapeUtah(house_num, street_name):
 		url = 'http://www.utahcounty.gov/LandRecords/AddressSearchForm.asp'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 5)
+		wait = WebDriverWait(browser, 2)
 
 		house_num_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#av_house')))
 		browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)

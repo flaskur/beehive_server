@@ -22,7 +22,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		url = 'https://www.redfin.com/'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 5)
+		wait = WebDriverWait(browser, 2)
 
 		search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
 		search_field.send_keys(address)
