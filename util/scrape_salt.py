@@ -38,30 +38,51 @@ def scrapeSalt(house_num, street_name):
 		# iterate through white rows, if address matches, immediately move to new url
 		found_count = 0
 		for result in results_white:
-			result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
+			result_address = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)).strip().lower()
+			result_address = result_address.split(' ')
+			end_address = address.split(' ')
 
-			if address in result_address.lower():
+			success = True
+
+			while len(result_address) != 0:
+				if result_address[0] in end_address:
+					end_address.remove(result_address.pop(0))
+					# print(result_address, end_address)
+				else:
+					success = False
+					break
+
+			# on failure it will not add the url to new_urls
+			if success:
 				source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
 				new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
 				found_count += 1
 				new_urls.append(new_url)
 
-				# browser.get(new_url)
-				break
 
 		results_grey = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsGrey')))
 
 		for result in results_grey:
-			result_address = browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)
+			result_address = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[0].children[2].children[0].children[0].innerText', result)).strip().lower()
+			result_address = result_address.split(' ')
+			end_address = address.split(' ')
 
-			if address in result_address.lower():
+			success = True
+
+			while len(result_address) != 0:
+				if result_address[0] in end_address:
+					end_address.remove(result_address.pop(0))
+					# print(result_address, end_address)
+				else:
+					success = False
+					break
+
+			# on failure it will not add the url to new_urls
+			if success:
 				source = browser.execute_script('return arguments[0].children[0].getAttribute("onclick")', result)
 				new_url = 'https://slco.org/assessor/new/' + source.split("'")[1]
 				found_count += 1
 				new_urls.append(new_url)
-
-				# browser.get(new_url)
-				break
 
 		# no address match, return error
 		if found_count < 1:
