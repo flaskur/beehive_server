@@ -5,11 +5,13 @@ sys.path.insert(0, '/util/scrape_salt.py')
 sys.path.insert(0, '/util/scrape_utah.py')
 sys.path.insert(0, '/util/scrape_wasatch.py')
 sys.path.insert(0, '/util/scrape_weber.py')
+sys.path.insert(0, '/util/scrape_tooele.py')
 sys.path.insert(0, '/util/scrape_redfin.py')
 import util.scrape_salt as scrape_salt
 import util.scrape_utah as scrape_utah
 import util.scrape_wasatch as scrape_wasatch
 import util.scrape_weber as scrape_weber
+import util.scrape_tooele as scrape_tooele
 import util.scrape_redfin as scrape_redfin
 
 app = Flask(__name__)
@@ -75,6 +77,8 @@ def postScrape():
 		result['accessor'] = scrape_wasatch.scrapeWasatch(data['houseNum'], data['streetName'])
 	elif data['zipcode'] in weberZipcodes:
 		result['accessor'] = scrape_weber.scrapeWeber(data['houseNum'], data['streetName'])
+	elif data['zipcode'] in tooeleZipcodes:
+		result['accessor'] = scrape_tooele.scrapeTooele(data['houseNum'], data['streetName'])
 	else:
 		result['accessor'] = {
 			'error': True
