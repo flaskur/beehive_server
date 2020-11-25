@@ -74,49 +74,42 @@ def scrapeSalt(house_num, street_name):
 		# for now assume we take the last url?
 		browser.get(new_urls[-1])
 
-		parcel_id_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#parcelFieldNames div div strong')))
-		parcel_id = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].innerText', parcel_id_box))
+		parcel_id = ''
+		owner = ''
+		address = ''
+		acreage = ''
+		square_footage = ''
+		property_type = ''
+		tax_district = ''
+		land_value = ''
+		building_value = ''
+		market_value = ''
 
-		summary_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.valueSummBox table tbody')))
-
-		owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
-		address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
-		acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
-		square_footage = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
-		property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
-		tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
-		land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
-		building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
-		market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
-
-		val_history = [] # array of maps
-
-		# scrape value history
 		try:
-			value_history = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#valuehistory table tbody')))
+			parcel_id_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#parcelFieldNames div div strong')))
+			parcel_id = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].innerText', parcel_id_box))
 
-			i = 0
-			# iterate for last 5 assumption, or iterate until failure 
-			while i < 5:
-				history = {}
-				history['year'] = browser.execute_script('return arguments[0].children[arguments[1]].children[0].innerText', value_history, i).strip()
-				history['land_value'] = browser.execute_script('return arguments[0].children[arguments[1]].children[2].innerText', value_history, i).strip()
-				history['building_value'] = browser.execute_script('return arguments[0].children[arguments[1]].children[3].innerText', value_history, i).strip()
-				history['market_value'] = browser.execute_script('return arguments[0].children[arguments[1]].children[4].innerText', value_history, i).strip()
+			summary_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.valueSummBox table tbody')))
 
-				val_history.append(history)
-				i += 1
+			owner = browser.execute_script('return arguments[0].children[0].children[1].innerText', summary_box)
+			address = browser.execute_script('return arguments[0].children[1].children[1].innerText', summary_box)
+			acreage = browser.execute_script('return arguments[0].children[2].children[1].innerText', summary_box)
+			square_footage = browser.execute_script('return arguments[0].children[3].children[1].innerText', summary_box)
+			property_type = browser.execute_script('return arguments[0].children[4].children[1].innerText', summary_box)
+			tax_district = browser.execute_script('return arguments[0].children[5].children[1].innerText', summary_box)
+			land_value = browser.execute_script('return arguments[0].children[6].children[1].innerText', summary_box)
+			building_value = browser.execute_script('return arguments[0].children[7].children[1].innerText', summary_box)
+			market_value = browser.execute_script('return arguments[0].children[8].children[1].innerText', summary_box)
 		except Exception as err:
-			print(err, 'failed value history')
+			print(err, 'failed summary scrape')
 
-			
 		central_ac = ''
 		heating = ''
 		owner_occupied = ''
 		total_rooms = ''
 		beds = ''
 		baths = ''
-		three_quarters_baths = ''
+		three_fourths_baths = ''
 		half_baths = ''
 		kitchens = ''
 		fire_places = ''
@@ -128,10 +121,8 @@ def scrapeSalt(house_num, street_name):
 		finished_basement_area = ''
 		above_basement_area = ''
 
-		# condos have different residence record that doesn't work for this check
 		try:
 			residence_record = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#residencetable')))
-			print('RESIDENCE RECORD FOUND')
 			
 			central_ac = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[4].children[0].innerText', residence_record)
 			heating = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[5].children[0].innerText', residence_record)
@@ -140,7 +131,7 @@ def scrapeSalt(house_num, street_name):
 			beds = browser.execute_script('return arguments[0].children[1].children[0].children[0].children[9].children[0].innerText', residence_record)
 
 			baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[0].children[0].innerText', residence_record)
-			three_quarters_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
+			three_fourths_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
 			half_baths = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[2].children[0].innerText', residence_record)
 			kitchens = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[3].children[0].innerText', residence_record)
 			fire_places = browser.execute_script('return arguments[0].children[1].children[0].children[1].children[4].children[0].innerText', residence_record)
@@ -156,48 +147,6 @@ def scrapeSalt(house_num, street_name):
 		except Exception as err:
 			print(err, 'failed residence record')
 
-
-		# html code is unique depending on whether or not there is 1 or greater than 1 detached structure
-		det_structures = []
-		try:
-			detached_structures = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#detachedTable table tbody')))
-
-			i = 1
-			# we expect an error, but we still need to build structure hash map
-			while True:
-				structure = {}
-
-				# weird \xa0 append
-				structure['name'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[0].children[arguments[1]].innerText', detached_structures, i)).strip()
-				structure['measure1'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[4].children[arguments[1]].innerText', detached_structures, i)).strip()
-				structure['measure2'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[5].children[arguments[1]].innerText', detached_structures, i)).strip()
-				structure['actual_year_built'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[7].children[arguments[1]].innerText', detached_structures, i)).strip()
-				structure['replacement_cost_new'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[11].children[arguments[1]].innerText', detached_structures, i)).strip()
-				
-				det_structures.append(structure)
-				i += 1
-		except Exception as err:
-			print('FINISHED ALL DET STRUCTURES OR...')
-			print('NOT MULTI DETACHED STRUCTURE TABLE')
-			print(err)
-
-			try:
-				detached_structures = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div#detachedTable div.details')))
-
-				structure = {}
-
-				structure['name'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[0].children[0].children[0].innerText', detached_structures)).strip()
-				structure['measure1'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[4].children[0].children[0].innerText', detached_structures)).strip()
-				structure['measure2'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[1].children[5].children[0].children[0].innerText', detached_structures)).strip()
-				structure['actual_year_built'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[2].children[1].children[0].children[0].innerText', detached_structures)).strip()
-				structure['replacement_cost_new'] = unicodedata.normalize('NFKD', browser.execute_script('return arguments[0].children[3].children[0].children[0].children[0].innerText', detached_structures)).strip()
-
-				det_structures.append(structure)
-			except Exception as err:
-				print('ACTUALLY NO DETACHED STRUCTURES')
-				print(err)
-
-
 		scrape_info = dict(
 			error=False,
 			county='Salt Lake',
@@ -212,14 +161,13 @@ def scrapeSalt(house_num, street_name):
 			land_value=land_value.strip(),
 			building_value=building_value.strip(),
 			market_value=market_value.strip(),
-			val_history=val_history,
 			central_ac=central_ac.strip(),
 			heating=heating.strip(),
 			owner_occupied=owner_occupied.strip(),
 			total_rooms=total_rooms.strip(),
 			beds=beds.strip(),
 			baths=baths.strip(),
-			three_quarters_baths=three_quarters_baths.strip(),
+			three_fourths_baths=three_fourths_baths.strip(),
 			half_baths=half_baths.strip(),
 			kitchens=kitchens.strip(),
 			fire_places=fire_places.strip(),
@@ -228,8 +176,7 @@ def scrapeSalt(house_num, street_name):
 			main_floor_area=main_floor_area.strip(),
 			above_ground_area=above_ground_area.strip(),
 			basement_area=basement_area.strip(),
-			finished_basement_area=finished_basement_area.strip(),
-			det_structures=det_structures
+			finished_basement_area=finished_basement_area.strip()
 		)
 
 		return scrape_info
@@ -252,5 +199,3 @@ def scrapeSalt(house_num, street_name):
 
 # info5 = scrapeSalt('5908', 's 5625 w')
 # print(info5)
-
-# need to handle duplicate correct addresses, allow user to select eventually
