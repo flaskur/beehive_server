@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import unicodedata
+import os
 
 GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
@@ -16,14 +17,18 @@ def scrapeSalt(house_num, street_name):
 		address = f'{house_num} {street_name}'.lower()
 		print(address)
 
+		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
+		print('environ setting')
+
 		chrome_options = Options()
 		print('set options')
 
-		chrome_options.binary_location = GOOGLE_CHROME_BIN
+		chrome_options.binary_location = chrome_bin
 		print('set bin location')
 
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
+		chrome_options.add_argument('--headless')
 		print('set arguments')
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
