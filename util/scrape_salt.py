@@ -14,6 +14,7 @@ CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 def scrapeSalt(house_num, street_name):
 	try:
 		address = f'{house_num} {street_name}'.lower()
+		print(address)
 
 
 		chrome_options = Options()
@@ -24,6 +25,8 @@ def scrapeSalt(house_num, street_name):
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
+		print('set browser config')
+
 		# options = Options()
 		# options.headless = True
 		# browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
@@ -31,6 +34,8 @@ def scrapeSalt(house_num, street_name):
 
 		url = 'https://slco.org/assessor/new/searchiframe.cfm'
 		browser.get(url)
+
+		print('visited site')
 
 		house_num_field = browser.find_element_by_css_selector('input[name="street_Num"]')
 		browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)
@@ -40,6 +45,8 @@ def scrapeSalt(house_num, street_name):
 
 		submit_button = browser.find_element_by_css_selector('input#Submit')
 		browser.execute_script('arguments[0].click()', submit_button)
+
+		print('set field values')
 
 		wait = WebDriverWait(browser, 10)
 
@@ -214,6 +221,7 @@ def scrapeSalt(house_num, street_name):
 
 		return scrape_info
 	except Exception as err:
+		print('outer error')
 		return {
 			'error': True
 		}
