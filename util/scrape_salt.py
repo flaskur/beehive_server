@@ -29,7 +29,7 @@ def scrapeSalt(house_num, street_name):
 		submit_button = browser.find_element_by_css_selector('input#Submit')
 		browser.execute_script('arguments[0].click()', submit_button)
 
-		wait = WebDriverWait(browser, 5)
+		wait = WebDriverWait(browser, 10)
 
 		results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
 

@@ -20,7 +20,7 @@ def scrapeWeber(house_num, street_name):
 		url = 'http://www3.co.weber.ut.us/psearch/'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 5)
+		wait = WebDriverWait(browser, 10)
 
 		address_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#address')))
 		browser.execute_script('arguments[0].value = arguments[1]', address_field, address)

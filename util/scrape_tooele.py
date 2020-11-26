@@ -20,7 +20,7 @@ def scrapeTooele(house_num, street_name):
 		url = 'https://erecording.tooeleco.org/eaglesoftware/web/login.jsp'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 5)
+		wait = WebDriverWait(browser, 10)
 
 		enter_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[value="Enter"]')))
 		browser.execute_script('arguments[0].click()', enter_button)
