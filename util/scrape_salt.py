@@ -16,13 +16,19 @@ def scrapeSalt(house_num, street_name):
 		address = f'{house_num} {street_name}'.lower()
 		print(address)
 
+		time.sleep(5)
 
 		chrome_options = Options()
+		print('set options')
 
 		chrome_options.binary_location = GOOGLE_CHROME_BIN
+		print('set bin location')
+
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
+		print('set arguments')
 
+		time.sleep(5)
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
 		print('set browser config')
