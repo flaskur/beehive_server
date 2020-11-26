@@ -12,11 +12,9 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeSalt(house_num, street_name):
-	try:
+	# try:
 		address = f'{house_num} {street_name}'.lower()
 		print(address)
-
-		time.sleep(5)
 
 		chrome_options = Options()
 		print('set options')
@@ -28,7 +26,6 @@ def scrapeSalt(house_num, street_name):
 		chrome_options.add_argument('--no-sandbox')
 		print('set arguments')
 
-		time.sleep(5)
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
 		print('set browser config')
@@ -226,11 +223,11 @@ def scrapeSalt(house_num, street_name):
 		)
 
 		return scrape_info
-	except Exception as err:
-		print('outer error')
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	print('outer error')
+	# 	return {
+	# 		'error': True
+	# 	}
 
 # info = scrapeSalt('2451', 'e ellisonwoods ave')
 # print(info)
