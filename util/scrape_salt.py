@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import unicodedata
 
-GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeSalt(house_num, street_name):
@@ -16,11 +16,11 @@ def scrapeSalt(house_num, street_name):
 		address = f'{house_num} {street_name}'.lower()
 
 
-		chrome_options = webdriver.ChromeOptions()
+		chrome_options = Options()
 
+		chrome_options.binary_location = GOOGLE_CHROME_BIN
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
-		chrome_options.binary_location = GOOGLE_CHROME_PATH
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
