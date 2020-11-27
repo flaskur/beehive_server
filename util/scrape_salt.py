@@ -13,7 +13,8 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeSalt(house_num, street_name):
-	try:
+	# try:
+		print('salt lake')
 		address = f'{house_num} {street_name}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -209,10 +210,10 @@ def scrapeSalt(house_num, street_name):
 		)
 
 		return scrape_info
-	except Exception as err:
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	return {
+	# 		'error': True
+	# 	}
 
 # info = scrapeSalt('2451', 'e ellisonwoods ave')
 # print(info)

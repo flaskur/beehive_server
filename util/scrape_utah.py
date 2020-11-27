@@ -13,7 +13,8 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeUtah(house_num, street_name):
-	try:
+	# try:
+		print('utah')
 		address = f'{house_num} {street_name}'.lower()
 
 		direction = street_name.split(' ', 1)[0][0].lower()
@@ -235,10 +236,10 @@ def scrapeUtah(house_num, street_name):
 		)
 
 		return scrape_info
-	except Exception as err:
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	return {
+	# 		'error': True
+	# 	}
 
 
 # info1 = scrapeUtah('1709', 'n 2230 w')

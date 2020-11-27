@@ -14,7 +14,8 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeRedfin(house_num, street_name, zipcode):
-	try:
+	# try:
+		print('redfin')
 		address = f'{house_num} {street_name} {zipcode}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -99,10 +100,10 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		)
 
 		return scrape_info
-	except Exception as err:
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	return {
+	# 		'error': True
+	# 	}
 
 
 # info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')

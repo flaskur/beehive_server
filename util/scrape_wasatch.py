@@ -13,7 +13,8 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeWasatch(house_num, street_name):
-	try:
+	# try:
+		print('wasatch')
 		address = f'{house_num} {street_name}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -143,10 +144,10 @@ def scrapeWasatch(house_num, street_name):
 		)
 
 		return scrape_info
-	except Exception as err:
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	return {
+	# 		'error': True
+	# 	}
 
 
 # info1 = scrapeWasatch('290', 'w 300 s')
