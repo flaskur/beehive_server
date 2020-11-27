@@ -7,15 +7,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import unicodedata
+import os
+
+GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
+CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeTooele(house_num, street_name):
 	try:
 		address = f'{house_num} {street_name}'.lower()
 
-		options = Options()
-		options.headless = True
-		browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options) # headless mode
-		# browser = webdriver.Chrome(ChromeDriverManager().install()) # opens browser
+		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
+		chrome_options = Options()
+		chrome_options.binary_location = chrome_bin
+		chrome_options.add_argument('--disable-gpu')
+		chrome_options.add_argument('--no-sandbox')
+		chrome_options.add_argument('--headless')
+
+		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
 
 		url = 'https://erecording.tooeleco.org/eaglesoftware/web/login.jsp'
 		browser.get(url)
