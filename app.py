@@ -69,6 +69,7 @@ def postScrape():
 	print('invoking POST SCRAPE')
 
 	result = {}
+	result['redfin'] = scrape_redfin.scrapeRedfin(data['houseNum'], data['streetName'], data['zipcode'])
 	if data['zipcode'] in saltZipcodes:
 		result['accessor'] = scrape_salt.scrapeSalt(data['houseNum'], data['streetName'])
 	elif data['zipcode'] in utahZipcodes:
@@ -84,7 +85,6 @@ def postScrape():
 			'error': True
 		}
 
-	result['redfin'] = scrape_redfin.scrapeRedfin(data['houseNum'], data['streetName'], data['zipcode'])
 
 	print(result)
 	return jsonify(result)
