@@ -133,6 +133,7 @@ def scrapeWeber(house_num, street_name):
 			acreage=acreage
 		)
 
+		browser.quit()
 		return scrape_info
 	# except Exception as err:
 	# 	return {

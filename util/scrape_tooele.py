@@ -112,6 +112,7 @@ def scrapeTooele(house_num, street_name):
 			primary_taxable=primary_taxable
 		)
 
+		browser.quit()
 		return scrape_info
 	# except Exception as err:
 	# 	return {

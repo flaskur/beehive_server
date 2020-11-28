@@ -235,6 +235,7 @@ def scrapeUtah(house_num, street_name):
 			market_value=market_value
 		)
 
+		browser.quit()
 		return scrape_info
 	# except Exception as err:
 	# 	return {

@@ -143,6 +143,7 @@ def scrapeWasatch(house_num, street_name):
 			legal_taxing_description=legal_taxing_description
 		)
 
+		browser.quit()
 		return scrape_info
 	# except Exception as err:
 	# 	return {

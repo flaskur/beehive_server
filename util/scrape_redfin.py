@@ -99,6 +99,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 			county=county
 		)
 
+		browser.quit()
 		return scrape_info
 	except Exception as err:
 		print(err)

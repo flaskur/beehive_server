@@ -209,6 +209,7 @@ def scrapeSalt(house_num, street_name):
 			finished_basement_area=finished_basement_area.strip()
 		)
 
+		browser.quit()
 		return scrape_info
 	# except Exception as err:
 	# 	return {
