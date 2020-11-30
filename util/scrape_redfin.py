@@ -36,6 +36,11 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		print(browser.current_url)
 		browser.save_screenshot('screenshot.png')
 
+		time.sleep(2)
+		print('slept 2 seconds')
+		time.sleep(2)
+		print('sleep another 2 seconds')
+
 		para_box = browser.find_element_by_css_selector('p.subtitle')
 		para = browser.execute_script('return arguments[0].innerText', para_box)
 		print(para)
