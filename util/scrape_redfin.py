@@ -38,7 +38,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 
 		wait = WebDriverWait(browser, 10)
 
-		text_box = wait.until(EC.visibility_of_element_located(By.CSS_SELECTOR, 'h2.title'))
+		text_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'h2.title')))
 		text = browser.execute_script('return arguments[0].innerText', text_box)
 		print(text)
 
