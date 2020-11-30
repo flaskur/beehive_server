@@ -13,8 +13,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeWasatch(house_num, street_name):
-	# try:
-		print('wasatch')
+	try:
 		address = f'{house_num} {street_name}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -25,11 +24,12 @@ def scrapeWasatch(house_num, street_name):
 		chrome_options.add_argument('--headless')
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'https://www.wasatch.utah.gov/Services/Information-Lookup-Services/Property-Tax-Information-Lookup/Current-Year-Property-Tax-Lookup'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 10)
+		wait = WebDriverWait(browser, 5)
 
 		property_address_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#dnn_ctr1237_DynamicViews_dgSearchField_SearchTextTextBox_3')))
 		browser.execute_script('arguments[0].value = arguments[1]', property_address_field, address)
@@ -145,10 +145,10 @@ def scrapeWasatch(house_num, street_name):
 
 		browser.quit()
 		return scrape_info
-	# except Exception as err:
-	# 	return {
-	# 		'error': True
-	# 	}
+	except Exception as err:
+		return {
+			'error': True
+		}
 
 
 # info1 = scrapeWasatch('290', 'w 300 s')

@@ -13,8 +13,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeTooele(house_num, street_name):
-	# try:
-		print('tooele')
+	try:
 		address = f'{house_num} {street_name}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -25,11 +24,12 @@ def scrapeTooele(house_num, street_name):
 		chrome_options.add_argument('--headless')
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'https://erecording.tooeleco.org/eaglesoftware/web/login.jsp'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 10)
+		wait = WebDriverWait(browser, 5)
 
 		enter_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input[value="Enter"]')))
 		browser.execute_script('arguments[0].click()', enter_button)
@@ -114,10 +114,10 @@ def scrapeTooele(house_num, street_name):
 
 		browser.quit()
 		return scrape_info
-	# except Exception as err:
-	# 	return {
-	# 		'error': True
-	# 	}
+	except Exception as err:
+		return {
+			'error': True
+		}
 
 
 

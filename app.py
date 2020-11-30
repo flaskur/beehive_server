@@ -22,41 +22,13 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 @cross_origin()
 def index():
 	values = {
-		'message': 'some message',
-		'name': 'bob',
-		'age': 23,
-		'cool': True
+		'message': 'FLASK API INDEX ROUTE',
 	}
 	
 	return jsonify(values)
 
-@app.route('/check', methods=['POST'])
-@cross_origin()
-def postCheck():
-	data = request.json # originally passed in as a json string, but converted to json obj
-
-	print(data) # should be a json object?
-
-	return jsonify(data)
-
-@app.route('/search', methods=['POST'])
-@cross_origin()
-def postSearch():
-	data = request.json # from request body
-
-	print(data)
-
-	# invoke all scrape util funcs concurrently?
-
-	response = {
-		'random': [1,2,3]
-	}
-
-	return jsonify(response)
-
-# set to post method later
 @app.route('/scrape', methods=['POST'])
-@cross_origin(origin='https://angry-lamarr-030472.netlify.app/')
+@cross_origin()
 def postScrape():
 	saltZipcodes = ['84006', '84020', '84096', '84044', '84047', '84065', '84101', '84102', '84103', '84104', '84105', '84106', '84107', '84108', '84109', '84111', '84112', '84113', '84115', '84116', '84117', '84118', '84119', '84120', '84121', '84123', '84124', '84128', '84144', '84180', '84070', '84092', '84093', '84094', '84095', '84081', '84084', '84088']
 	utahZipcodes = ['84004', '84003', '84013', '84020', '84005', '84626', '84629', '84633', '84526', '84043', '84042', '84664', '84057', '84058', '84097', '84651', '84062', '84601', '84604', '84606', '84653', '84655', '84045', '84660', '84663']
@@ -65,11 +37,11 @@ def postScrape():
 	tooeleZipcodes = ['84022', '84029', '84034', '84069', '84071', '84074', '84080', '84083']
  	
 	data = request.json
-	print(data, data['houseNum'], data['streetName'], data['zipcode'])
-	print('invoking POST SCRAPE')
+
+	# print(data, data['houseNum'], data['streetName'], data['zipcode'])
+	# print('invoking POST SCRAPE')
 
 	result = {}
-	result['redfin'] = scrape_redfin.scrapeRedfin(data['houseNum'], data['streetName'], data['zipcode'])
 	if data['zipcode'] in saltZipcodes:
 		result['accessor'] = scrape_salt.scrapeSalt(data['houseNum'], data['streetName'])
 	elif data['zipcode'] in utahZipcodes:
@@ -85,10 +57,9 @@ def postScrape():
 			'error': True
 		}
 
+	result['redfin'] = scrape_redfin.scrapeRedfin(data['houseNum'], data['streetName'], data['zipcode'])
 
-	print(result)
 	return jsonify(result)
-
 
 
 if __name__ == '__main__':

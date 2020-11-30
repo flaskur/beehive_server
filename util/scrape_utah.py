@@ -13,8 +13,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeUtah(house_num, street_name):
-	# try:
-		print('utah')
+	try:
 		address = f'{house_num} {street_name}'.lower()
 
 		direction = street_name.split(' ', 1)[0][0].lower()
@@ -28,11 +27,12 @@ def scrapeUtah(house_num, street_name):
 		chrome_options.add_argument('--headless')
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'http://www.utahcounty.gov/LandRecords/AddressSearchForm.asp'
 		browser.get(url)
 
-		wait = WebDriverWait(browser, 10)
+		wait = WebDriverWait(browser, 5)
 
 		house_num_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#av_house')))
 		browser.execute_script('arguments[0].value = arguments[1]', house_num_field, house_num)
@@ -237,10 +237,10 @@ def scrapeUtah(house_num, street_name):
 
 		browser.quit()
 		return scrape_info
-	# except Exception as err:
-	# 	return {
-	# 		'error': True
-	# 	}
+	except Exception as err:
+		return {
+			'error': True
+		}
 
 
 # info1 = scrapeUtah('1709', 'n 2230 w')

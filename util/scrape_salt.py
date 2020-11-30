@@ -13,8 +13,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeSalt(house_num, street_name):
-	# try:
-		print('salt lake')
+	try:
 		address = f'{house_num} {street_name}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -39,7 +38,7 @@ def scrapeSalt(house_num, street_name):
 		submit_button = browser.find_element_by_css_selector('input#Submit')
 		browser.execute_script('arguments[0].click()', submit_button)
 
-		wait = WebDriverWait(browser, 10)
+		wait = WebDriverWait(browser, 5)
 
 		results_white = wait.until(EC.visibility_of_all_elements_located((By.CSS_SELECTOR, 'tr.resultsWhite')))
 
@@ -100,9 +99,6 @@ def scrapeSalt(house_num, street_name):
 				'error': True
 			}
 
-		print(new_urls)
-
-		# for now assume we take the last url?
 		browser.get(new_urls[-1])
 
 		parcel_id = ''
@@ -212,10 +208,10 @@ def scrapeSalt(house_num, street_name):
 
 		browser.quit()
 		return scrape_info
-	# except Exception as err:
-	# 	return {
-	# 		'error': True
-	# 	}
+	except Exception as err:
+		return {
+			'error': True
+		}
 
 # info = scrapeSalt('2451', 'e ellisonwoods ave')
 # print(info)

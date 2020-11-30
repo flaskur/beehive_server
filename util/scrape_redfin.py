@@ -14,8 +14,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeRedfin(house_num, street_name, zipcode):
-	# try:
-		print('redfin')
+	try:
 		address = f'{house_num} {street_name} {zipcode}'.lower()
 
 		chrome_bin = os.environ.get('GOOGLE_CHROME_BIN', 'chromedriver')
@@ -23,7 +22,7 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		chrome_options.binary_location = chrome_bin
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
-		# chrome_options.add_argument('--headless')
+		chrome_options.add_argument('--headless')
 		chrome_options.add_argument('--ignore-certificate-errors')
 		chrome_options.add_argument("--test-type")
 
@@ -33,19 +32,13 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		url = 'https://www.redfin.com/'
 		browser.get(url)
 
-		print(browser.current_url)
+		wait = WebDriverWait(browser, 5)
 
-		wait = WebDriverWait(browser, 10)
+		search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
+		search_field.send_keys(address)
 
-
-		h = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'html')))
-		print(browser.execute_script('return arguments[0].innerText', h))
-
-		# search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
-		# search_field.send_keys(address)
-
-		# address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
-		# browser.execute_script('arguments[0].click()', address_link)
+		address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
+		browser.execute_script('arguments[0].click()', address_link)
 
 		# MAIN RESULTS PAGE
 
@@ -67,10 +60,6 @@ def scrapeRedfin(house_num, street_name, zipcode):
 			main_statistics = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[data-rf-test-id="abp-homeinfo-homemainstats"]')))
 
 			estimate = browser.execute_script('return arguments[0].children[0].children[0].innerText', main_statistics)
-			# beds = browser.execute_script('return arguments[0].children[1].children[0].innerText', main_statistics)
-			# baths = browser.execute_script('return arguments[0].children[2].children[0].innerText', main_statistics)
-			# square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[0].innerText', main_statistics)
-			# price_per_square_footage = browser.execute_script('return arguments[0].children[3].children[0].children[2].innerText', main_statistics)
 		except Exception as err:
 			print(err, 'failed top statistics')
 
@@ -110,11 +99,10 @@ def scrapeRedfin(house_num, street_name, zipcode):
 
 		browser.quit()
 		return scrape_info
-	# except Exception as err:
-	# 	print(err)
-	# 	return {
-	# 		'error': True
-	# 	}
+	except Exception as err:
+		return {
+			'error': True
+		}
 
 
 # info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
