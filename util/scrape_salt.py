@@ -25,6 +25,7 @@ def scrapeSalt(house_num, street_name):
 		chrome_options.add_argument('--headless')
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'https://slco.org/assessor/new/searchiframe.cfm'
 		browser.get(url)

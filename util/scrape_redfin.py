@@ -14,7 +14,7 @@ GOOGLE_CHROME_BIN = '/app/.apt/usr/bin/google_chrome'
 CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
 
 def scrapeRedfin(house_num, street_name, zipcode):
-	try:
+	# try:
 		print('redfin')
 		address = f'{house_num} {street_name} {zipcode}'.lower()
 
@@ -25,7 +25,8 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		chrome_options.add_argument('--no-sandbox')
 		chrome_options.add_argument('--headless')
 
-		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
+		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'https://www.redfin.com/'
 		browser.get(url)
@@ -101,11 +102,11 @@ def scrapeRedfin(house_num, street_name, zipcode):
 
 		browser.quit()
 		return scrape_info
-	except Exception as err:
-		print(err)
-		return {
-			'error': True
-		}
+	# except Exception as err:
+	# 	print(err)
+	# 	return {
+	# 		'error': True
+	# 	}
 
 
 # info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
