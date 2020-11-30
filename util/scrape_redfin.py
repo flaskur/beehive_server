@@ -24,12 +24,17 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		chrome_options.add_argument('--disable-gpu')
 		chrome_options.add_argument('--no-sandbox')
 		chrome_options.add_argument('--headless')
+		chrome_options.add_argument('--ignore-certificate-errors')
+		chrome_options.add_argument("--test-type")
 
 		browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, options=chrome_options)
 		# browser = webdriver.Chrome(ChromeDriverManager().install())
 
 		url = 'https://www.redfin.com/'
 		browser.get(url)
+
+		print(browser.current_url)
+		browser.save_screenshot('screenshot.png')
 
 		wait = WebDriverWait(browser, 10)
 
@@ -109,8 +114,8 @@ def scrapeRedfin(house_num, street_name, zipcode):
 	# 	}
 
 
-# info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
-# print(info1)
+info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
+print(info1)
 
 # info2 = scrapeRedfin('4068', 's 3200 w', '84119')
 # print(info2)
