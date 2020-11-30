@@ -114,8 +114,8 @@ def scrapeRedfin(house_num, street_name, zipcode):
 	# 	}
 
 
-info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
-print(info1)
+# info1 = scrapeRedfin('2451', 'ellisonwoods ave', '84121')
+# print(info1)
 
 # info2 = scrapeRedfin('4068', 's 3200 w', '84119')
 # print(info2)
