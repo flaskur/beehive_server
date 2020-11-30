@@ -38,11 +38,19 @@ def scrapeRedfin(house_num, street_name, zipcode):
 
 		wait = WebDriverWait(browser, 10)
 
-		search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
-		search_field.send_keys(address)
+		text_box = wait.until(EC.visibility_of_element_located(By.CSS_SELECTOR, 'h2.title'))
+		text = browser.execute_script('return arguments[0].innerText', text_box)
+		print(text)
 
-		address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
-		browser.execute_script('arguments[0].click()', address_link)
+		para_box = browser.find_element_by_css_selector('p.subtitle')
+		para = browser.execute_script('return arguments[0].innerText', para_box)
+		print(para)
+
+		# search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
+		# search_field.send_keys(address)
+
+		# address_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.ExpandedResults div.expanded-section div.expanded-row-content a.item-title')))
+		# browser.execute_script('arguments[0].click()', address_link)
 
 		# MAIN RESULTS PAGE
 
