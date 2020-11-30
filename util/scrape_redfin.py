@@ -36,15 +36,16 @@ def scrapeRedfin(house_num, street_name, zipcode):
 		print(browser.current_url)
 		browser.save_screenshot('screenshot.png')
 
+		para_box = browser.find_element_by_css_selector('p.subtitle')
+		para = browser.execute_script('return arguments[0].innerText', para_box)
+		print(para)
+
 		wait = WebDriverWait(browser, 10)
 
 		text_box = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'h2.title')))
 		text = browser.execute_script('return arguments[0].innerText', text_box)
 		print(text)
 
-		para_box = browser.find_element_by_css_selector('p.subtitle')
-		para = browser.execute_script('return arguments[0].innerText', para_box)
-		print(para)
 
 		# search_field = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'input#search-box-input')))
 		# search_field.send_keys(address)
