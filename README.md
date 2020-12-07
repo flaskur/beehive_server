@@ -2,4 +2,4 @@
 
 This API is the backend that services the requests from the frontend React Project. 
 
-[Frontend Repo Link](https://github.com/flaskur/beehive_client)
+[Frontend Repo Link](https://github.com/beehivehbs/beehive_client)
